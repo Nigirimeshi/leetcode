@@ -32,6 +32,19 @@
 空间复杂度：O(1)。没有额外空间被使用。
 
 
+方法 4：使用反转
+这个方法基于这个事实：当我们旋转数组 k 次， k % n 个尾部元素会被移动到头部，剩下的元素会被向后移动。
+在这个方法中，我们首先将所有元素反转。然后反转前 k 个元素，再反转后面 n-kn−k 个元素，就能得到想要的结果。
+
+假设 n=7 且 k=3。
+原始数组                  : 1 2 3 4 5 6 7
+反转所有数字后             : 7 6 5 4 3 2 1
+反转前 k 个数字后          : 5 6 7 4 3 2 1
+反转后 n-k 个数字后        : 5 6 7 1 2 3 4 --> 结果
+
+时间复杂度：O(n) 。 n 个元素被反转了总共 3 次。
+空间复杂度：O(1) 。 没有使用额外的空间。
+
 """
 from typing import List
 
@@ -39,20 +52,36 @@ from typing import List
 class Solution:
     def rotate(self, nums: List[int], k: int) -> None:
         """
-        Do not return anything, modify nums in-place instead.
         方法一：暴力
         """
         for i in range(k):
-            previous = nums[len(nums)-1]
+            previous = nums[len(nums) - 1]
             for j in range(len(nums)):
                 tmp = nums[j]
                 nums[j] = previous
                 previous = tmp
 
+    def rotate4(self, nums: List[int], k: int) -> None:
+        """
+        方法四：反转
+        """
+        def reverse(nums: List[int], start, end: int) -> None:
+            while start < end:
+                tmp = nums[start]
+                nums[start] = nums[end]
+                nums[end] = tmp
+                start += 1
+                end -= 1
+        length = len(nums)
+        kk = k % length
+        reverse(nums, 0, length - 1)
+        reverse(nums, 0, kk - 1)
+        reverse(nums, kk, length - 1)
+
 
 def main():
     s = Solution()
-    s.rotate([1, 2, 3, 4, 5, 6, 7], 3)
+    s.rotate4([1, 2, 3, 4, 5, 6, 7], 3)
 
 
 if __name__ == '__main__':
