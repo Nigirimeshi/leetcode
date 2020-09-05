@@ -51,43 +51,74 @@
 给定数独永远是 9x9 形式的。
 
 我的解题思路：
-1. 内外遍历数组，外循环表示行，内循环表示列，
+1. 哈希表分别记录行、列元素次数，大于一则返回 False；
+将 9x9 的表格划分成 9 块，用哈希表记录每块的元素次数，每个块的索引值计算公式为：box_index = (row / 3) * 3 + column / 3
 
 """
+import unittest
+
 from typing import List
 
 
 class Solution:
-    def isValidSudoku(self, board: List[List[str]]) -> bool:
-        nine_palace_grid = list()
-        rows = list()
-        for row in range(len(board)):
-            if board[row][0] in rows:
-                return False
-            rows.append(board[row])
+    def is_valid_sudoku(self, board: List[List[str]]) -> bool:
+        boxes = [{} for i in range(9)]
+        rows = [{} for i in range(9)]
+        columns = [{} for i in range(9)]
 
-            columns = list()
-            for column in range(len(board[row])):
-                if board[row][column] in columns:
+        for row in range(9):
+            for column in range(9):
+                num = board[row][column]
+                if num == '.':
+                    continue
+
+                rows[row][num] = rows[row].get(num, 0) + 1
+                columns[column][num] = columns[column].get(num, 0) + 1
+                
+                box_index: float = (row // 3) * 3 + column // 3
+                boxes[box_index][num] = boxes[box_index].get(num, 0) + 1
+                if rows[row][num] > 1 or columns[column][num] > 1 or boxes[box_index][num] > 1:
                     return False
-                columns.append(board[row][column])
+        return True
 
+class TestSolution(unittest.TestCase):
+    def setUp(self) -> None:
+        self.s = Solution()
 
-def main():
-    case = [
-        ["5", "3", ".", ".", "7", ".", ".", ".", "."],
-        ["6", ".", ".", "1", "9", "5", ".", ".", "."],
-        [".", "9", "8", ".", ".", ".", ".", "6", "."],
-        ["8", ".", ".", ".", "6", ".", ".", ".", "3"],
-        ["4", ".", ".", "8", ".", "3", ".", ".", "1"],
-        ["7", ".", ".", ".", "2", ".", ".", ".", "6"],
-        [".", "6", ".", ".", ".", ".", "2", "8", "."],
-        [".", ".", ".", "4", "1", "9", ".", ".", "5"],
-        [".", ".", ".", ".", "8", ".", ".", "7", "9"],
-    ]
-    s = Solution()
-    s.isValidSudoku(case)
+    def test_is_valid_sudoku(self) -> None:
+        cases = [
+            {
+                'input': [
+                    ["5", "3", ".", ".", "7", ".", ".", ".", "."],
+                    ["6", ".", ".", "1", "9", "5", ".", ".", "."],
+                    [".", "9", "8", ".", ".", ".", ".", "6", "."],
+                    ["8", ".", ".", ".", "6", ".", ".", ".", "3"],
+                    ["4", ".", ".", "8", ".", "3", ".", ".", "1"],
+                    ["7", ".", ".", ".", "2", ".", ".", ".", "6"],
+                    [".", "6", ".", ".", ".", ".", "2", "8", "."],
+                    [".", ".", ".", "4", "1", "9", ".", ".", "5"],
+                    [".", ".", ".", ".", "8", ".", ".", "7", "9"],
+                ],
+                'output': True,
+            },
+            {
+                'input': [
+                    ["8", "3", ".", ".", "7", ".", ".", ".", "."],
+                    ["6", ".", ".", "1", "9", "5", ".", ".", "."],
+                    [".", "9", "8", ".", ".", ".", ".", "6", "."],
+                    ["8", ".", ".", ".", "6", ".", ".", ".", "3"],
+                    ["4", ".", ".", "8", ".", "3", ".", ".", "1"],
+                    ["7", ".", ".", ".", "2", ".", ".", ".", "6"],
+                    [".", "6", ".", ".", ".", ".", "2", "8", "."],
+                    [".", ".", ".", "4", "1", "9", ".", ".", "5"],
+                    [".", ".", ".", ".", "8", ".", ".", "7", "9"],
+                ],
+                'output': False,
+            },
+        ]
+        for case in cases:
+            self.assertEqual(self.s.is_valid_sudoku(case['input']), case['output'])
 
 
 if __name__ == '__main__':
-    main()
+    unittest.main()
