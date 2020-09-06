@@ -74,12 +74,13 @@ class Solution:
 
                 rows[row][num] = rows[row].get(num, 0) + 1
                 columns[column][num] = columns[column].get(num, 0) + 1
-                
+
                 box_index: float = (row // 3) * 3 + column // 3
                 boxes[box_index][num] = boxes[box_index].get(num, 0) + 1
                 if rows[row][num] > 1 or columns[column][num] > 1 or boxes[box_index][num] > 1:
                     return False
         return True
+
 
 class TestSolution(unittest.TestCase):
     def setUp(self) -> None:
