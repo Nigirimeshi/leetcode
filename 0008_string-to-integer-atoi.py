@@ -50,6 +50,20 @@
 
 官方解法：
 1. 正则表达式。
+2. 自动机。
+字符串处理的题目往往涉及复杂的流程以及条件情况，如果直接上手写程序，一不小心就会写出极其臃肿的代码。
+因此，为了有条理地分析每个输入字符的处理方法，我们可以使用自动机这个概念：
+我们的程序在每个时刻有一个状态 s，每次从序列中输入一个字符 c，并根据字符 c 转移到下一个状态 s'。
+这样，我们只需要建立一个覆盖所有情况的从 s 与 c 映射到 s' 的表格即可解决题目中的问题。
+
+            ' '     +/-         number  	other
+start	    start   signed	    in_number	end
+signed	    end	    end	        in_number	end
+in_number	end	    end	        in_number	end
+end	        end	    end	        end	        end
+
+接下来编程部分就非常简单了：我们只需要把上面这个状态转换表抄进代码即可。
+另外自动机也需要记录当前已经输入的数字，只要在 s' 为 in_number 时，更新我们输入的数字，即可最终得到输入的数字。
 
 """
 import re
@@ -105,8 +119,51 @@ class Solution:
         return num if not negative_number else -num
 
 
+INT_MAX = 2 ** 31 - 1
+INT_MIN = -2 ** 31
+
+
+class Automaton:
+    """
+                ' '     +/-         number  	other
+    start	    start   signed	    in_number	end
+    signed	    end	    end	        in_number	end
+    in_number	end	    end	        in_number	end
+    end	        end	    end	        end	        end
+    """
+
+    def __init__(self):
+        self.state = 'start'
+        self.sign = 1
+        self.ans = 0
+        self.table = {
+            'start': ['start', 'signed', 'in_number', 'end'],
+            'signed': ['end', 'end', 'in_number', 'end'],
+            'in_number': ['end', 'end', 'in_number', 'end'],
+            'end': ['end', 'end', 'end', 'end'],
+        }
+
+    def get_col(self, c):
+        if c.isspace():
+            return 0
+        if c == '+' or c == '-':
+            return 1
+        if c.isdigit():
+            return 2
+        return 3
+
+    def get(self, c):
+        self.state = self.table[self.state][self.get_col(c)]
+        if self.state == 'in_number':
+            self.ans = self.ans * 10 + int(c)
+            self.ans = min(self.ans, INT_MAX) if self.sign == 1 else min(self.ans, -INT_MIN)
+        elif self.state == 'signed':
+            self.sign = 1 if c == '+' else -1
+
+
 class OfficialSolution:
     def my_atoi(self, s: str) -> int:
+        """正则表达式解法"""
         return max(
             min(
                 int(*re.findall('^[\+\-]?\d+', s.lstrip())),
@@ -114,6 +171,13 @@ class OfficialSolution:
             ),
             -2 ** 31,
         )
+
+    def my_atoi_2(self, s: str) -> int:
+        """自动机解法"""
+        automaton = Automaton()
+        for c in s:
+            automaton.get(c)
+        return automaton.sign * automaton.ans
 
 
 class TestSolution(unittest.TestCase):
@@ -151,6 +215,45 @@ class TestSolution(unittest.TestCase):
         )
         self.assertEqual(
             self.s.my_atoi("  -42"),
+            -42,
+        )
+
+
+class TestOfficialSolution(unittest.TestCase):
+    def setUp(self) -> None:
+        self.s = OfficialSolution()
+
+    def test_my_atoi_2(self) -> None:
+        self.assertEqual(
+            self.s.my_atoi_2(""),
+            0,
+        )
+        self.assertEqual(
+            self.s.my_atoi_2(" "),
+            0,
+        )
+        self.assertEqual(
+            self.s.my_atoi_2("+"),
+            0,
+        )
+        self.assertEqual(
+            self.s.my_atoi_2("-"),
+            0,
+        )
+        self.assertEqual(
+            self.s.my_atoi_2("42"),
+            42,
+        )
+        self.assertEqual(
+            self.s.my_atoi_2("-42"),
+            -42,
+        )
+        self.assertEqual(
+            self.s.my_atoi_2("  42"),
+            42,
+        )
+        self.assertEqual(
+            self.s.my_atoi_2("  -42"),
             -42,
         )
 
