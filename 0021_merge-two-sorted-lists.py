@@ -29,7 +29,7 @@ class ListNode:
         self.next = next
 
 
-class Solution:
+class OfficialSolution:
     def merge_two_lists(self, l1: ListNode, l2: ListNode) -> ListNode:
         pre_head = ListNode(-1)
         prev = pre_head
@@ -47,7 +47,7 @@ class Solution:
         return pre_head.next
 
 
-class TestSolution(unittest.TestCase):
+class TestOfficialSolution(unittest.TestCase):
     @staticmethod
     def list_to_list_node(l: List) -> ListNode:
         dummy = ListNode(0)
@@ -60,7 +60,7 @@ class TestSolution(unittest.TestCase):
     def setUp(self) -> None:
         self.node1 = self.list_to_list_node([1, 2, 4])
         self.node2 = self.list_to_list_node([1, 3, 4])
-        self.s = Solution()
+        self.s = OfficialSolution()
 
     def test_merge_two_lists(self) -> None:
         node = self.s.merge_two_lists(self.node1, self.node2)
