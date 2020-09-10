@@ -31,6 +31,7 @@ class ListNode:
 
 class OfficialSolution:
     def merge_two_lists(self, l1: ListNode, l2: ListNode) -> ListNode:
+        """迭代"""
         pre_head = ListNode(-1)
         prev = pre_head
 
@@ -45,6 +46,20 @@ class OfficialSolution:
         # 合并后的 l1 和 l2 最多只有还未合并完，直接将链表末尾指向未合并完的链表即可。
         prev.next = l1 if l1 is not None else l2
         return pre_head.next
+
+    def merge_two_lists_2(self, l1: ListNode, l2: ListNode) -> ListNode:
+        """递归"""
+        if not l1:
+            return l2
+        if not l2:
+            return l1
+
+        if l1.val <= l2.val:
+            l1.next = self.merge_two_lists_2(l1.next, l2)
+            return l1
+        else:
+            l2.next = self.merge_two_lists_2(l1, l2.next)
+            return l2
 
 
 class TestOfficialSolution(unittest.TestCase):
@@ -63,7 +78,7 @@ class TestOfficialSolution(unittest.TestCase):
         self.s = OfficialSolution()
 
     def test_merge_two_lists(self) -> None:
-        node = self.s.merge_two_lists(self.node1, self.node2)
+        node = self.s.merge_two_lists_2(self.node1, self.node2)
         values = list()
         while node is not None:
             values.append(node.val)
