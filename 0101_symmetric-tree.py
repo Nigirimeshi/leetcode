@@ -23,49 +23,81 @@
 进阶：
 你可以运用递归和迭代两种方法解决这个问题吗？
 
-我的解题思路：
-1. 中序遍历二叉树，如示例 1 中的二叉树，结果应为 [3, 2, 4, 1, 4, 2, 3]。
-得到的数组应为回文数组，之后判断数组是否回文数组即可。
+官方解法：
+1. 递归。
+比较 left 和 right，再比较 left.left 和 right.right，以及 left.right 和 right.left，依此递归。
+递归终止条件：
+1) 当 left 和 right 都为 None 时，返回 True；
+2) 当 left 或 right 为 None 时，返回 False；
+3) 当 left 不等于 right 时，返回 False。
+
+时间复杂度是 O(n)，因为要遍历 n 个节点
+空间复杂度是 O(n)，空间复杂度是递归的深度，也就是跟树高度有关，最坏情况下树变成一个链表结构，高度是 n。
+
+2. 迭代。
+维护一个队列，每次从队列中拿两个节点（left 和 right）比较，
+再将 left.left 和 right.right 以及 left.right 和 right.left 放入队列。
+两节点都为空时进入下一次循环，仅一个为空时，返回 False。
+
+时间复杂度：O(n)。
+空间复杂度：O(n)。
 
 """
 import unittest
-from typing import List
 
 from struct.tree import TreeNode
 
 
-class Solution:
+class OfficialSolution:
     def is_symmetric(self, root: TreeNode) -> bool:
-        """中序遍历。"""
-        stack, values = [], []
-        while len(stack) > 0 or root is not None:
-            while root is not None:
-                # 移动到最左子节点，并记录移动过程中的节点。
-                stack.append(root)
-                print(f'stack: {stack}')
-                root = root.left
-            root = stack.pop()
-            values.append(root.val)
-            print(f'values: {values}')
-            if (root.left is not None and root.right is None) or (root.right is not None and root.left is None):
-                values.append(None)
-            root = root.right
-        print(values)
+        """递归。"""
+        if not root:
+            return True
+        return self.check(root.left, root.right)
 
-        return self.is_reverse_list(values)
+    def check(self, left, right) -> bool:
+        # 左右节点都为空。
+        if not (left or right):
+            return True
 
-    def is_reverse_list(self, arr: List) -> bool:
-        left, right = 0, len(arr) - 1
-        while left < right:
-            if arr[left] != arr[right]:
+        # 两个节点有一个为空。
+        if not (left and right):
+            return False
+
+        # 两个节点不等。
+        if left.val != right.val:
+            return False
+
+        return self.check(left.left, right.right) and self.check(left.right, right.left)
+
+    def is_symmetric_2(self, root: TreeNode) -> bool:
+        """迭代。"""
+        if not root or not (root.left or root.right):
+            return True
+
+        queue = [root.left, root.right]
+        while queue:
+            left, right = queue.pop(0), queue.pop(0)
+            # 两节点都为空，继续循环。
+            if not (left or right):
+                continue
+            # 两节点有一个为空，即不对称，返回 False。
+            if not (left and right):
                 return False
-            left, right = left + 1, right - 1
+            # 两节点值不等，返回 False。
+            if left.val != right.val:
+                return False
+            queue.append(left.left)
+            queue.append(right.right)
+            queue.append(left.right)
+            queue.append(right.left)
+
         return True
 
 
 class TestSolution(unittest.TestCase):
     def setUp(self) -> None:
-        self.s = Solution()
+        self.s = OfficialSolution()
 
     def test_is_symmetric(self) -> None:
         # [1, 2, 3, 4, null, 5]
