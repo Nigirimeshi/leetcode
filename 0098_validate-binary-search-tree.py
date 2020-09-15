@@ -54,7 +54,7 @@
 """
 import unittest
 
-from struct.tree import TreeNode
+from structure.tree import TreeNode
 
 
 class OfficialSolution:

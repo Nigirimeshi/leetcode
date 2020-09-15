@@ -31,7 +31,7 @@
 """
 import unittest
 
-from struct.tree import TreeNode, Tree
+from structure.tree import TreeNode, Tree
 
 
 class Solution:

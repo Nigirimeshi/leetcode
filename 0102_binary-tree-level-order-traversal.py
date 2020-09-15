@@ -32,7 +32,7 @@
 import unittest
 from typing import List
 
-from struct.tree import TreeNode
+from structure.tree import TreeNode
 
 
 class OfficialSolution:

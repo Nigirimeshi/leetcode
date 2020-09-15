@@ -55,7 +55,7 @@
 """
 import unittest
 
-from struct.linked_list import ListNode, list_to_list_node
+from structure.linked_list import ListNode, list_to_list_node
 
 
 class Solution:

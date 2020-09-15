@@ -45,7 +45,7 @@ def 做一棵树（数组的哪个段落要做成树）：#这个段落用索引
 import unittest
 from typing import List
 
-from struct.tree import TreeNode
+from structure.tree import TreeNode
 
 
 class OfficialSolution:
