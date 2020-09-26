@@ -15,3 +15,11 @@ def list_to_list_node(arr: List) -> ListNode:
         n.next = ListNode(v)
         n = n.next
     return dummy.next
+
+
+def list_node_to_list(node: ListNode) -> List:
+    ans = []
+    while node:
+        ans.append(node.val)
+        node = node.next
+    return ans
