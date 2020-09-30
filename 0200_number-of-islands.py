@@ -43,6 +43,14 @@
 时间复杂度：O(MN)，其中 M 和 N 分别为行数和列数。
 空间复杂度：O(MN)，在最坏情况下，整个网格均为陆地，深度优先搜索的深度达到 MN。
 
+2. BFS。
+使用队列 queue，判断队首节点 (i, j) 是否为 '1'：
+ - 若是则将该节点置零，并将上下左右节点加入队列。
+ - 若不是，跳过。
+循环从队列取，直到队列空。
+
+
+
 """
 import unittest
 from typing import List
@@ -70,6 +78,26 @@ class OfficialSolution:
                     count += 1
         return count
 
+    def num_islands_2(self, grid: List[List[str]]) -> int:
+        """BFS。"""
+
+        def bfs(g: List[List[str]], i, j) -> None:
+            queue = [(i, j)]
+            while queue:
+                i, j = queue.pop(0)
+                if 0 <= i < len(g) and 0 <= j < len(g[0]) and g[i][j] == '1':
+                    g[i][j] = '0'
+                    queue += [i - 1, j], [i + 1, j], [i, j - 1], [i, j + 1]
+
+        count = 0
+        for r in range(len(grid)):
+            for c in range(len(grid[0])):
+                if grid[r][c] != '1':
+                    continue
+                bfs(grid, r, c)
+                count += 1
+        return count
+
 
 class TestSolution(unittest.TestCase):
     def setUp(self) -> None:
@@ -77,7 +105,7 @@ class TestSolution(unittest.TestCase):
 
     def test_num_islands(self) -> None:
         self.assertEqual(
-            self.s.num_islands(
+            self.s.num_islands_2(
                 [
                     ["1", "1", "1", "1", "0"],
                     ["1", "1", "0", "1", "0"],
