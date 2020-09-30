@@ -30,99 +30,83 @@
 输出: 3
 解释: 每座岛屿只能由水平和/或竖直方向上相邻的陆地连接而成。
 
-我的解题思路：
-1. 哈希表。
-双层遍历二维网格，用哈希表存储坐标和分组值。
-设行为 i，列为 j，当 i > 0，j > 0 时，检查元素为 1 的相邻左边和上边元素在哈希表中是否存在分组值，存在则记录该元素坐标，分组值相等；
-不存在则记录坐标，并使分组值加 1。
+官方解法：
+1. DFS。
+从坐标 (i, j) 的上下左右 (i-1, j), (i+1, j), (i, j-1), (i, j+1) 做深度优先搜索。
+终止条件：
+ - (i, j) 越过矩阵边界。
+ - grid[i][j] == '0'，表示已经越过岛屿边界。
+将遍历过的岛屿标为 0，即将岛屿删除，避免之后重复搜索。
+
+主循环：遍历矩阵，遇到 grid[i][j] == '1' 时，开始做 dfs，并使岛屿数加 1。
+
+时间复杂度：O(MN)，其中 M 和 N 分别为行数和列数。
+空间复杂度：O(MN)，在最坏情况下，整个网格均为陆地，深度优先搜索的深度达到 MN。
 
 """
 import unittest
 from typing import List
 
 
-class Solution:
+class OfficialSolution:
     def num_islands(self, grid: List[List[str]]) -> int:
-        if not grid:
-            return 0
+        """DFS。"""
 
-        maps = {}
-        num_groups = 0
-        rows, columns = len(grid), len(grid[0])
+        def dfs(g: List[List[str]], i, j: int) -> None:
+            if not 0 <= i < len(g) or not 0 <= j < len(g[0]) or g[i][j] == '0':
+                return
 
-        if grid[0][0] == '1':
-            num_groups += 1
-            maps[(0, 0)] = num_groups
+            g[i][j] = '0'
+            dfs(g, i - 1, j)
+            dfs(g, i + 1, j)
+            dfs(g, i, j - 1)
+            dfs(g, i, j + 1)
 
-        # 遍历第一行。
-        for j in range(1, columns):
-            if grid[0][j] != '1':
-                continue
-            if (0, j - 1) in maps:
-                maps[(0, j)] = maps[(0, j - 1)]
-            else:
-                num_groups += 1
-                maps[(0, j)] = num_groups
-
-        # 遍历第一列。
-        for i in range(1, rows):
-            if grid[i][0] != '1':
-                continue
-            if (i - 1, 0) in maps:
-                maps[(i, 0)] = maps[(i - 1, 0)]
-            else:
-                num_groups += 1
-                maps[(i, 0)] = num_groups
-
-        for i in range(1, rows):
-            for j in range(1, columns):
-                if grid[i][j] != '1':
-                    continue
-
-                if not maps.__contains__((i, j - 1)) and not maps.__contains__((i - 1, j)):
-                    num_groups += 1
-                    maps[(i, j)] = num_groups
-                    continue
-
-                if (i, j - 1) in maps:
-                    maps[(i, j)] = maps[(i, j - 1)]
-                    continue
-
-                if (i - 1, j) in maps:
-                    maps[(i, j)] = maps[(i - 1, j)]
-                    continue
-
-        print(num_groups)
-        return num_groups
+        count = 0
+        for r in range(len(grid)):
+            for c in range(len(grid[0])):
+                if grid[r][c] == '1':
+                    dfs(grid, r, c)
+                    count += 1
+        return count
 
 
 class TestSolution(unittest.TestCase):
     def setUp(self) -> None:
-        self.s = Solution()
+        self.s = OfficialSolution()
 
     def test_num_islands(self) -> None:
-        self.s.num_islands(
-            [
-                ["1", "1", "1", "1", "0"],
-                ["1", "1", "0", "1", "0"],
-                ["1", "1", "0", "0", "0"],
-                ["0", "0", "0", "0", "0"],
-            ]
+        self.assertEqual(
+            self.s.num_islands(
+                [
+                    ["1", "1", "1", "1", "0"],
+                    ["1", "1", "0", "1", "0"],
+                    ["1", "1", "0", "0", "0"],
+                    ["0", "0", "0", "0", "0"],
+                ]
+            ),
+            1,
         )
-        self.s.num_islands(
-            [
-                ['1', '1', '0', '0', '0'],
-                ['1', '1', '0', '0', '0'],
-                ['0', '0', '1', '0', '0'],
-                ['0', '0', '0', '1', '1'],
-            ]
+        self.assertEqual(
+            self.s.num_islands(
+                [
+                    ['1', '1', '0', '0', '0'],
+                    ['1', '1', '0', '0', '0'],
+                    ['0', '0', '1', '0', '0'],
+                    ['0', '0', '0', '1', '1'],
+                ]
+            ),
+            3,
         )
-        self.s.num_islands(
-            [
-                ["1", "1", "1"],
-                ["0", "1", "0"],
-                ["1", "1", "1"],
-            ]
+        self.assertEqual(
+            self.s.num_islands(
+                [
+                    ["1", "1", "1"],
+                    ["0", "1", "0"],
+                    ["1", "1", "1"],
+                ]
+            ),
+            1,
         )
 
 
