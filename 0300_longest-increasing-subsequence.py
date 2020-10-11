@@ -1,6 +1,8 @@
 """
 最长上升子序列
 
+标签：动态规划、贪心
+
 链接：https://leetcode-cn.com/problems/longest-increasing-subsequence
 
 给定一个无序的整数数组，找到其中最长上升子序列的长度。
@@ -28,7 +30,7 @@
 空间复杂度：O(N^2)。
 时间复杂度：O(N)。
 
-2. 动态规划 + 二分查找。
+2. 动态规划 + 贪心 + 二分查找。
 """
 import unittest
 from typing import List
