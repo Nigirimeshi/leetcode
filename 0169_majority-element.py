@@ -35,6 +35,18 @@
 时间复杂度：O(n)。理论上最坏情况下是 o(∞)，由于运气差一直找不到众数。
 空间复杂度：O(1)。
 
+3. 摩尔投票法。
+如果把众数记为 +1，其他数记为 -1，将它们全部加起来，显然和大于 0。
+算法：
+ - 维护一个候选众数 ans = nums[0]，和它出现的次数 count = 0。
+ - 遍历数组，每个元素为 num，如果此时 count 等于 0，则将 ans = num，然后判断 num：
+   - 如果 num 等于 ans，则 count + 1；
+   - 如果 num 不等于 ans，则 count - 1。
+ - 遍历完成后，ans 即为整个数组的众数。
+
+时间复杂度：O(n)
+空间复杂度：O(1)
+
 """
 import collections
 import random
@@ -70,6 +82,16 @@ class OfficialSolution:
             candidate = random.choice(nums)
             if sum(1 for elem in nums if elem == candidate) > majority_count:
                 return candidate
+
+    def majority_element_3(self, nums: List[int]) -> int:
+        """摩尔投票法。"""
+        ans = nums[0]
+        count = 0
+        for num in nums:
+            if count == 0:
+                ans = num
+            count += 1 if num == ans else -1
+        return ans
 
 
 class TestSolution(unittest.TestCase):
