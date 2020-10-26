@@ -47,8 +47,12 @@ class Solution:
         """哈希表。"""
         counts = collections.defaultdict(int)
         ans = nums[0]
+        size = len(nums)
         for num in nums:
             counts[num] += 1
+            if counts[num] > (size // 2):
+                ans = num
+                break
             ans = ans if counts[ans] >= counts[num] else num
         return ans
 
