@@ -40,8 +40,8 @@ nums2 = [2,5,6],       n = 3
 空间复杂度：O(1)
 
 """
-import unittest
 from typing import List
+import unittest
 
 
 class Solution:
@@ -82,17 +82,27 @@ class OfficialSolution:
             nums1[p1 + p2:] = nums2[p2:]
 
     def merge_3(self, nums1: List[int], m: int, nums2: List[int], n: int) -> None:
-        """双（三）指针法（从后往前）"""
-        p1, p2, p = m - 1, n - 1, m + n - 1,
+        """
+        双指针 - 从后向前。
+        因为 nums1 尾部是 0，因此从尾部改写 nums1，不需要额外的空间。
+        设置指针 p1，p2 分别指向 m-1，n-1，循环左移，且 p1 >= 0 and p2 >= 0；
+        每次将 nums1[p1] 和 nums2[p2] 中较大值放入 nums1 的尾部；
+        最后再将 nums2 中剩余元素
+        """
+        p1 = m - 1
+        p2 = n - 1
+        p = m + n - 1
+    
         while p1 >= 0 and p2 >= 0:
-            if nums1[p1] >= nums2[p2]:
+            if nums1[p1] > nums2[p2]:
                 nums1[p] = nums1[p1]
                 p1 -= 1
             else:
                 nums1[p] = nums2[p2]
                 p2 -= 1
             p -= 1
-
+    
+        # 将 nums2 中剩余的值放入 nums1。
         nums1[:p2 + 1] = nums2[:p2 + 1]
 
 
@@ -101,11 +111,18 @@ class TestSolution(unittest.TestCase):
         self.s = Solution()
 
     def test_merge(self) -> None:
-        nums1 = [1, 2, 3, 0, 0, 0]
-        self.s.merge(nums1, 3, [2, 5, 6], 3)
+        # nums1 = [1, 2, 3, 0, 0, 0]
+        # self.s.merge(nums1, 3, [2, 5, 6], 3)
+        # self.assertListEqual(
+        #     nums1,
+        #     [1, 2, 2, 3, 5, 6],
+        # )
+    
+        nums1 = [1, 2, 3, 4, 0, 0, 0]
+        self.s.merge(nums1, 4, [2, 5, 6], 3)
         self.assertListEqual(
             nums1,
-            [1, 2, 2, 3, 5, 6],
+            [1, 2, 2, 3, 4, 5, 6],
         )
 
 
