@@ -17,17 +17,21 @@ s = "loveleetcode"
 我的解题方案：
 1. 双层遍历
 时间复杂度：O(n^2)
+
 2. 遍历字符串，用哈希表记录各字符次数；再次遍历，返回哈希表中字符次数为 1 的。
+时间复杂度：O(n)
+空间复杂度：O(n) 由于字母数量固定，也可理解为 O(1)
+
 """
-import unittest
 import collections
+import unittest
 
 
 class Solution:
     def first_uniq_char(self, s: str) -> int:
-        counter = collections.Counter(s)
-        for i in range(len(s)):
-            if counter[s[i]] == 1:
+        counts = collections.Counter(s)
+        for i, char in enumerate(s):
+            if counts[char] == 1:
                 return i
         return -1
 
