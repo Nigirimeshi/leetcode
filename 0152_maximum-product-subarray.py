@@ -26,7 +26,8 @@
 dp_max[i] = max(nums[i-1], dp_max[i-1] * nums[i], dp_min[i] * nums[i])
 dp_min[i] = min(nums[i-1], dp_max[i-1] * nums[i], dp_min[i] * nums[i])
 
-
+时间复杂度：O(n)
+空间复杂度：O(1)
 
 """
 from typing import List
