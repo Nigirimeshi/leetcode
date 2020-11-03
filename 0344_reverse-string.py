@@ -20,8 +20,8 @@
 2. 用两个指针分别指向数组头和尾，头指针右移，尾指针左移，指向的元素互换。
 
 """
-import unittest
 from typing import List
+import unittest
 
 
 class Solution:
@@ -30,11 +30,20 @@ class Solution:
         1. 用列表内置函数 reverse 反转。
         """
         s.reverse()
-
-    def reverse_string2(self, s: List[str]) -> None:
+    
+    def reverse_string_2(self, s: List[str]) -> None:
+        """双指针。"""
         n = len(s)
         for i in range(n // 2):
             s[i], s[n - 1 - i] = s[n - 1 - i], s[i]
+    
+    def reverse_string_3(self, s: List[str]) -> None:
+        """双指针（容易理解版）。"""
+        left, right = 0, len(s) - 1
+        while left <= right:
+            s[left], s[right] = s[right], s[left]
+            left += 1
+            right -= 1
 
 
 class TestSolution(unittest.TestCase):
@@ -43,7 +52,7 @@ class TestSolution(unittest.TestCase):
 
     def test_reverse_string(self) -> None:
         case = ["h", "e", "l", "l", "o"]
-        self.s.reverse_string2(case)
+        self.s.reverse_string_2(case)
         self.assertListEqual(case, ['o', 'l', 'l', 'e', 'h'])
 
 
