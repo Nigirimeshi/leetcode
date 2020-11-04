@@ -50,23 +50,19 @@
 """
 import collections
 import random
-import unittest
 from typing import List
+import unittest
 
 
 class Solution:
     def majority_element(self, nums: List[int]) -> int:
         """哈希表。"""
         counts = collections.defaultdict(int)
-        ans = nums[0]
-        size = len(nums)
+        n = len(nums) // 2
         for num in nums:
             counts[num] += 1
-            if counts[num] > (size // 2):
-                ans = num
-                break
-            ans = ans if counts[ans] >= counts[num] else num
-        return ans
+            if counts[num] > n:
+                return num
 
 
 class OfficialSolution:
