@@ -17,32 +17,66 @@
 输入: [1,1,1,3,3,4,3,2,4,2]
 输出: true
 
+我的解题思路：
+1. 集合。
+去除重复元素，判断集合和原数组大小。
+
+2. 排序。
+若存在重复元素，排序后它们应相邻。
+
+时间复杂度：O(nlogn)
+空间复杂度：O(1)
+
+3. 哈希表。
+存储各数字次数，若当前数字次数大于等于 2，直接返回 True。
+
+时间复杂度：O(n)
+空间复杂度：O(n)
+
 """
+from collections import defaultdict
 from typing import List
+import unittest
 
 
 class Solution:
-    def containsDuplicate(self, nums: List[int]) -> bool:
-        """我的第一种解法：比较去重后的集合和列表长度"""
+    def contains_duplicate(self, nums: List[int]) -> bool:
+        """集合。"""
         return len(set(nums)) != len(nums)
-
-    def containsDuplicate2(self, nums: List[int]) -> bool:
-        """我的第二种解法：先排序，如果存在重复元素，排序后它们应该相邻"""
+    
+    def contains_duplicate_2(self, nums: List[int]) -> bool:
+        """排序。"""
         nums.sort()
         for i in range(len(nums) - 1):
             if nums[i] == nums[i + 1]:
                 return True
         return False
+    
+    def contains_duplicate_3(self, nums: List[int]) -> bool:
+        """哈希表。"""
+        counts = defaultdict(int)
+        for num in nums:
+            counts[num] += 1
+            if counts[num] >= 2:
+                return True
+        return False
 
 
-def main():
-    s = Solution()
-    result = s.containsDuplicate([1, 2, 3, 1])
-    if result:
-        print("ok")
-    else:
-        print("wrong")
+class TestSolution(unittest.TestCase):
+    def setUp(self) -> None:
+        self.s = Solution()
+    
+    def test_contains_duplicate(self) -> None:
+        self.assertTrue(
+            self.s.contains_duplicate_3([1, 2, 3, 1])
+        )
+        self.assertFalse(
+            self.s.contains_duplicate_3([1, 2, 3, 4])
+        )
+        self.assertTrue(
+            self.s.contains_duplicate_3([1, 1, 1, 3, 3, 4, 3, 2, 4, 2])
+        )
 
 
 if __name__ == '__main__':
-    main()
+    unittest.main()
