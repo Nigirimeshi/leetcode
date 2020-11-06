@@ -1,7 +1,7 @@
 """
 打乱数组
 
-类型：设计问题
+类型：设计问题，数组
 
 链接：https://leetcode-cn.com/problems/shuffle-an-array
 
@@ -48,9 +48,9 @@ Fisher-Yates 洗牌算法时间复杂度是线性的，因为算法中生成随�
 因为要实现 重置 功能，原始数组必须得保存一份，因此空间复杂度并没有优化。
 
 """
-import unittest
 import random
 from typing import List
+import unittest
 
 
 class OfficialSolution:
@@ -64,18 +64,17 @@ class OfficialSolution:
         """
         Resets the array to its original configuration and return it.
         """
-        self.nums = self.original
-        self.original = self.original.copy()
+        self.nums = self.original.copy()
         return self.nums
 
     def shuffle(self) -> List[int]:
         """
         Returns a random shuffling of the array.
         """
-        aux = self.nums.copy()
+        tmp = self.nums.copy()
         for i in range(len(self.nums)):
-            remove_idx = random.randrange(len(aux))
-            self.nums[i] = aux.pop(remove_idx)
+            remove_idx = random.randrange(len(tmp))
+            self.nums[i] = tmp.pop(remove_idx)
         return self.nums
 
 
@@ -90,8 +89,7 @@ class OfficialSolution2:
         """
         Resets the array to its original configuration and return it.
         """
-        self.nums = self.original
-        self.original = self.original.copy()
+        self.nums = self.original.copy()
         return self.nums
 
     def shuffle(self) -> List[int]:
