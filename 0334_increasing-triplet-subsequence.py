@@ -20,36 +20,41 @@
 输入: [5,4,3,2,1]
 输出: false
 
-我的解题思路：
+官方解法：
 1. 双指针。
-用 small，mid 分别表示最小值和中间值，遍历数组。
-若数字小于 small，则替换 small；
-若大于 small 小于 mid，则替换 mid，
-若大于 mid，说明满足题目条件（长度为 3 的递增序列）。
+用 n1，n2 分别保存较小的数，且 n1 < n2，若还存在一个数大于 n2，则说明存在 3 个递增子序列。
+
+时间复杂度：O(n)
+空间复杂度：O(1)
 
 """
-import unittest
-import math
 from typing import List
+import unittest
 
 
-class Solution:
+class OfficialSolution:
     def increasing_triplet(self, nums: List[int]) -> bool:
-        small, mid = math.inf, math.inf
+        """双指针。"""
+        n1, n2 = float('inf'), float('inf')
         for num in nums:
-            if num <= small:
-                small = num
-            elif num <= mid:
-                mid = num
+            # 保存第一个较小的数。
+            if n1 >= num:
+                n1 = num
+            
+            # 保存第二个较小的数，且大于第一个数。
+            elif n2 >= num:
+                n2 = num
+            
+            # 同时大于 n1，n2。
             else:
                 return True
         return False
 
 
-class TestSolution(unittest.TestCase):
+class TestOfficialSolution(unittest.TestCase):
     def setUp(self) -> None:
-        self.s = Solution()
-
+        self.s = OfficialSolution()
+    
     def test_increasing_triplet(self) -> None:
         self.assertTrue(self.s.increasing_triplet([1, 2, 3, 4, 5]))
         self.assertFalse(self.s.increasing_triplet([5, 4, 3, 2, 1]))
