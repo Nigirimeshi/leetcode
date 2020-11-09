@@ -1,6 +1,8 @@
 """
 数组中的第 k 个最大元素
 
+标签：快排，堆
+
 链接：https://leetcode-cn.com/problems/kth-largest-element-in-an-array
 
 在未排序的数组中找到第 k 个最大的元素。请注意，你需要找的是数组排序后的第 k 个最大的元素，而不是第 k 个不同的元素。
@@ -18,6 +20,8 @@
 
 我的解题思路：
 1. 最小堆。
+内置 heapq 模块，heap[0] 是最小元素。
+
 时间复杂度：O(N*logK)。
 空间复杂度：O(K)。
 
@@ -31,17 +35,19 @@
 空间复杂度：O(logN)，递归使用栈空间的空间代价的期望为 O(logN)。
 
 """
-import unittest
 import heapq
 from typing import List
+import unittest
 
 
 class Solution:
     def find_kth_largest(self, nums: List[int], k: int) -> int:
         """最小堆。"""
+        # 从左到右递增。
         heap = []
         for num in nums:
             heapq.heappush(heap, num)
+            # 确保 heap 元素数量不超过 k + 1。
             if len(heap) > k:
                 heapq.heappop(heap)
         return heapq.heappop(heap)
@@ -72,6 +78,7 @@ class OfficialSolution:
                 j -= 1
             while i < j and nums[i] <= nums[pivot]:
                 i += 1
+            # 此时 i 指向左边大于指向 pivot 的元素，j 指向右边小于指向 pivot 的元素，交换它们的位置。
             nums[i], nums[j] = nums[j], nums[i]
         # 此时 i 等于 j。
         nums[j], nums[pivot] = nums[pivot], nums[j]
