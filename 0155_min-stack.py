@@ -54,11 +54,11 @@ import unittest
 
 
 class MinStack:
-
+    
     def __init__(self):
         self.array = []
         self.min = None
-
+    
     def push(self, x: int) -> None:
         self.array.append(x)
 
@@ -66,7 +66,7 @@ class MinStack:
             self.min = x
         else:
             self.min = min(self.min, x)
-
+    
     def pop(self) -> None:
         tmp = self.array[-1]
         self.array.pop()
@@ -77,31 +77,58 @@ class MinStack:
                 self.min = None
             else:
                 self.min = sorted_array[0]
-
+    
     def top(self) -> int:
         return self.array[-1]
-
+    
     def getMin(self) -> int:
         return self.min
 
 
-class OfficialMinStack:
+class MinStack2:
+    
+    def __init__(self):
+        """
+        initialize your data structure here.
+        """
+        self.array = []
+        self._min = []
+    
+    def push(self, x: int) -> None:
+        self.array.append(x)
+        if len(self.array) <= 1:
+            self._min.append(x)
+        else:
+            self._min.append(min(self._min[-1], x))
+    
+    def pop(self) -> None:
+        self.array.pop()
+        self._min.pop()
+    
+    def top(self) -> int:
+        return self.array[-1]
+    
+    def getMin(self) -> int:
+        return self._min[-1]
 
+
+class OfficialMinStack:
+    
     def __init__(self):
         self.stack = []
         self.min_stack = [math.inf]
-
+    
     def push(self, x: int) -> None:
         self.stack.append(x)
         self.min_stack.append(min(self.min_stack[-1], x))
-
+    
     def pop(self) -> None:
         self.stack.pop()
         self.min_stack.pop()
-
+    
     def top(self) -> int:
         return self.stack[-1]
-
+    
     def getMin(self) -> int:
         return self.min_stack[-1]
 
