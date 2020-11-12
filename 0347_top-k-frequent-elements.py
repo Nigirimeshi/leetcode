@@ -39,23 +39,39 @@
 空间复杂度：O(N)。哈希表需用 O(N)，堆用 O(K)。
 
 """
-import unittest
-import collections
+from collections import Counter
 import heapq
 from typing import List
+import unittest
 
 
 class OfficialSolution:
     def top_k_frequent(self, nums: List[int], k: int) -> List[int]:
-        """最小堆。"""
-        counts = collections.Counter(nums)
-        heap, ans = [], []
-        for num in counts:
-            heapq.heappush(heap, (counts[num], num))
+        """
+        哈希表 + 小根堆。
+        首先用哈希表记录数组中各元素及次数。
+        然后遍历哈希表，将对应次数及元素插入小根堆。
+        保持小根堆元素个数不超过 k 个。
+
+        时间复杂度：O(n*logk)
+        空间复杂度：O(n)
+        """
+        # 统计各元素出现次数。
+        counts = Counter(nums)
+        
+        # 用小根堆存储次数及元素。
+        heap = []
+        for num, count in counts.items():
+            heapq.heappush(heap, (count, num))
+            # 确保小根堆元素个数不超过 k 个，每次弹出小根堆堆顶（即最小值），那么剩下的就是前 k 大的。
             if len(heap) > k:
                 heapq.heappop(heap)
-        for _ in range(k):
-            ans.append(heapq.heappop(heap)[1])
+        
+        # 获取出现频率前 k 高的元素。
+        ans = []
+        for _, num in heap:
+            ans.append(num)
+        
         return ans
 
 
