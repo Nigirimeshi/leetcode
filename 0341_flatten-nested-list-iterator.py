@@ -25,7 +25,6 @@
 
 
 """
-import unittest
 
 
 # """
@@ -70,12 +69,3 @@ class NestedIterator:
 # Your NestedIterator object will be instantiated and called as such:
 # i, v = NestedIterator(nestedList), []
 # while i.hasNext(): v.append(i.next())
-
-
-class TestSolution(unittest.TestCase):
-    def setUp(self) -> None:
-        self.s = Solution()
-
-
-if __name__ == '__main__':
-    unittest.main()
