@@ -43,7 +43,7 @@ class NestedInteger():
         Return None if this NestedInteger holds a nested list
         """
     
-    def getList(self) -> [NestedInteger]:
+    def getList(self) -> ['NestedInteger']:
         """
         @return the nested list that this NestedInteger holds, if it holds a nested list
         Return None if this NestedInteger holds a single integer
