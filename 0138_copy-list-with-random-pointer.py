@@ -42,6 +42,20 @@ Node.random 为空（null）或指向链表中的节点。
 
 官方解法：
 1. 回溯。
+将链表想象成一张图，链表中每个节点都有 2 个指针（图中的边）。
+因为随机指针给图结构添加了随机性，所以可能会多次访问相同的节点，这样就形成了环。
+回溯法只需要遍历整个图并拷贝它。另外，为了避免随机指针可能导致死循环，需要在回溯过程中记录已经访问过的节点。
+
+算法：
+1）从头开始遍历整个图。
+2）当遍历到某个节点时，如果已经存在当前节点的拷贝，则不需要再重复拷贝。
+3）当还没拷贝当前节点时，就创造一个新的节点，并将该节点放到已访问字典中。
+4）针对两种情况进行回溯调用：
+4.1）顺着 random 指针调用。
+4.2）顺着 next 指针调用。
+
+时间复杂度：O(n)
+空间复杂度：O(n) 需要维护一个回溯的栈，同时也需要记录已经被深拷贝过的节点。
 
 2. 迭代。
 
@@ -131,9 +145,27 @@ class Solution:
 
 
 class OfficialSolution:
+    def __init__(self):
+        self.visited_nodes = {}
+    
     def copyRandomList(self, head: 'Node') -> 'Node':
         """回溯。"""
-        pass
+        if not head:
+            return None
+        
+        # 如果已经访问并拷贝过该节点，直接返回即可。
+        if head in self.visited_nodes:
+            return self.visited_nodes[head]
+        
+        # 未访问的节点，拷贝一份，并记录。
+        node = Node(head.val)
+        self.visited_nodes[head] = node
+        
+        # 顺着 random 和 next 递归。
+        node.next = self.copyRandomList(head.next)
+        node.random = self.copyRandomList(head.random)
+        
+        return node
     
     def copyRandomList_2(self, head: 'Node') -> 'Node':
         """迭代。"""
