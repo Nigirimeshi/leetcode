@@ -77,9 +77,7 @@ B：     1 -> 5
 """
 import unittest
 
-from structure.linked_list import (ListNode,
-                                   list_to_list_node,
-                                   list_node_to_list)
+from structure.linked_list import (ListNode)
 
 
 class Solution:
@@ -116,14 +114,37 @@ class OfficialSolution:
         return None
 
     def get_intersection_node(self, headA: ListNode, headB: ListNode) -> ListNode:
-        """双指针法。"""
+        """
+        双指针。
+        设指针 a，b 分别指向链表 A，B 的头部，
+        然后分别遍历链表，当遍历完当前链表，便将指针指向另一个链表的头部，继续遍历，直至 2 个指针相遇。
+        即：
+        - 指针 a 遍历完链表 A 时，把指针 a 指向链表 B；
+        - 指针 b 遍历完链表 B 时，把指针 b 指向链表 A。
+        最终两个指针走过的路径为（C 为相交部分的路径长度）：
+        指针 a：A + C + B
+        指针 b：B + C + A
+        路径明显相等，可知若 2 个链表相交，则指针 a，b 必在相交节点相遇。
+
+        时间复杂度：O(m+n)
+        空间复杂度：O(1)
+        """
+        # 任意一个链表不存在，肯定不相交。
         if not headA or not headB:
             return None
-
+    
+        # 分别指向 2 个链表头。
         a, b = headA, headB
+        # 遍历 2 个链表，直至两指针相等。
+        # 指针相等有 2 种情况：
+        # 1. 存在相交节点，a，b 指向相交节点。
+        # 2. 不存在相交节点，a，b 遍历到链表尾部，指向 None。
         while a != b:
+            # 当前链表遍历完，就指向另一个链表头部，接着遍历。
             a = a.next if a else headB
             b = b.next if b else headA
+    
+        # a 可能指向相交节点或 None。
         return a
 
 
