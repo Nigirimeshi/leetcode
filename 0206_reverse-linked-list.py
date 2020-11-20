@@ -16,7 +16,7 @@
 1. 迭代
 
 官方解法：
-1. 迭代。
+1. 双指针。
 遍历链表时，将当前节点的 next 指向前一个节点。
 由于节点没有引用上一个节点，所以必须事先存储上一节点。
 在更改引用前，还需要另一个指针存储下一节点。
@@ -61,22 +61,40 @@ class Solution:
 
 class OfficialSolution:
     def reverse_list(self, head: ListNode) -> ListNode:
-        prev = None
-        curr = head
-        while curr is not None:
-            next_tmp = curr.next
-            curr.next = prev
-            prev = curr
-            curr = next_tmp
-        return prev
-
+        """
+        双指针。
+        设指针 pre 指向 None，指针 cur 指向 head，
+        然后遍历 cur，每次将 cur.next 指向 pre，
+        然后将 pre 和 cur 沿着链表移动一位。
+        直到 cur 遍历完链表，此时 pre 指向链表最后一个元素。
+        """
+        pre, cur = None, head
+        # 用 cur 遍历链表。
+        while cur:
+            # 记录当前节点的下一个节点。
+            tmp = cur.next
+            # 将当前节点的下一个节点指向 pre。
+            cur.next = pre
+            # pre 和 cur 都前进一位。
+            pre = cur
+            cur = tmp
+        # cur 遍历完链表，pre 刚好指向链表尾部，此时链表已完成反转。
+        return pre
+    
     def reverse_list_2(self, head: ListNode) -> ListNode:
-        if head is None or head.next is None:
+        """
+        递归。
+        """
+        if not head or not head.next:
             return head
-        p = self.reverse_list_2(head.next)
+        
+        # cur 在递归回溯过程中一直链表尾节点，即反转后的头节点。
+        cur = self.reverse_list_2(head.next)
+        # 将 A -> B 变成 A <- B
         head.next.next = head
+        # 断开 A -> B，放置死循环。
         head.next = None
-        return p
+        return cur
 
 
 if __name__ == '__main__':
