@@ -50,18 +50,82 @@ from structure.linked_list import ListNode, list_to_list_node
 
 class Solution:
     def is_palindrome(self, head: ListNode) -> bool:
-        """链表转数组，再用双指针判断回文。"""
-        arr = list()
-        while head is not None:
-            arr.append(head.val)
-            head = head.next
-
+        """
+        链表转数组，再判断数组是否为回文数组。
+        时间复杂度：O(n)
+        空间复杂度：O(n)
+        """
+        if not head:
+            return True
+    
+        # 链表转数组。
+        arr = []
+        node = head
+        while node:
+            arr.append(node.val)
+            node = node.next
+    
+        # 双指针法判断数组是否为回文数组。
+        # 设置左、右指针从数组两边向中间移动，两指针相遇时停止。
         left, right = 0, len(arr) - 1
         while left < right:
+            # 若两指针对应元素不相等，说明非回文数组。
             if arr[left] != arr[right]:
                 return False
             left, right = left + 1, right - 1
         return True
+
+    def is_palindrome_2(self, head: ListNode) -> bool:
+        """
+        反转链表判断回文。
+        首先找出链表中点，将链表后半部分反转，
+        然后从链表头和链表中点开始遍历链表，并判断各节点是否相同，
+        最后将链表后半部分再次反转还原。
+
+        时间复杂度：O(n)
+        空间复杂度：O(1)
+        """
+        # 空链表认为是回文链表。
+        if not head:
+            return True
+    
+        # 使用快慢指针找到链表前半部分的尾结点，即指针 slow 最后指向的节点。
+        slow, fast = head, head
+        while fast.next and fast.next.next:
+            slow = slow.next
+            fast = fast.next.next
+    
+        # 反转链表后半部分。
+        # 反转后，前后链表将会断开。
+        reversed_head = self.reverse_linked_list(slow)
+    
+        # 比较前半部分和后半部分链表是否相同。
+        ans = True
+        first, second = head, reversed_head
+        while first and second:
+            if first.val != second.val:
+                ans = False  # 不要先返回，还没恢复链表。
+            first, second = first.next, second.next
+    
+        # 恢复链表。
+        # 将后半部分链表再次反转还原，再粘合两个链表。
+        slow.next = self.reverse_linked_list(reversed_head)
+        return ans
+
+    def reverse_linked_list(self, head: ListNode) -> ListNode:
+        """反转链表。"""
+        # 双指针反转链表。
+        pre, cur = None, head
+        while cur:
+            # 缓存 cur 的 next 节点。
+            tmp = cur.next
+            # 反转链表，如 A -> B，变成 A <- B。
+            cur.next = pre
+            # 用 pre 指向当前节点，用于下一次循环时反转。
+            pre = cur
+            # 移动到下一节点。
+            cur = tmp
+        return pre
 
 
 class OfficialSolution:
