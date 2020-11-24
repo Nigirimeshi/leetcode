@@ -42,6 +42,14 @@
 时间复杂度：O(N)
 空间复杂度：O(N)
 
+2. 大顶堆。
+注意：由于 Python 只有小顶堆，所以得存入元素负值。
+遍历树，保持大顶堆中元素不超过 k，当超过 k 时，弹出栈顶元素（即最大值），
+最后大顶堆中堆顶元素即为第 k 小的值。
+
+时间复杂度：O(N)
+空间复杂度：O(k)
+
 官方解法：
 1. 递归。
 通过构造 BST 的中序遍历序列，则第 k-1 个元素就是第 k 小的元素。
@@ -61,27 +69,58 @@
  - 当树是一个非平衡树时：O(N+k)。
 
 """
-import unittest
+import heapq
 from typing import List
+import unittest
 
 from structure.tree import TreeNode
 
 
 class Solution:
     def kth_smallest(self, root: TreeNode, k: int) -> int:
-        """DFS。"""
-        tmp = []
+        """
+        由于是二叉搜索树，
+        递归构造 BST 的中序遍历序列，第 k - 1 个元素即为第 k 小的值。
+        
+        时间复杂度：O(N)
+        空间复杂度：O(N)
+        """
+        
+        def inorder(r: TreeNode) -> List[int]:
+            """递归中序遍历。"""
+            if not r:
+                return []
+            
+            return inorder(r.left) + [r.val] + inorder(r.right)
+        
+        return inorder(root)[k - 1]
+    
+    def kth_smallest_2(self, root: TreeNode, k: int) -> int:
+        """
+        大顶堆。
+        注意：由于 Python 只有小顶堆，所以得存入元素负值。
+        遍历树，保持大顶堆中元素不超过 k，当超过 k 时，弹出栈顶元素（即最大值），
+        最后大顶堆中堆顶元素即为第 k 小的值。
 
-        def dfs(node: TreeNode):
-            if not node:
-                return
-
-            dfs(node.left)
-            tmp.append(node.val)
-            dfs(node.right)
-
-        dfs(root)
-        return tmp[k - 1]
+        时间复杂度：O(N)
+        空间复杂度：O(k)
+        """
+        stack = [root]
+        heap = []
+        while stack:
+            node = stack.pop()
+            if node.left:
+                stack.append(node.left)
+            if node.right:
+                stack.append(node.right)
+            
+            # 存入元素负值，用小顶堆代替大顶堆。
+            heapq.heappush(heap, -node.val)
+            # 大根堆超过 k，弹出堆顶（最大值）。
+            if len(heap) > k:
+                heapq.heappop(heap)
+        # 返回大根堆顶元素，即为第 k 小的值，注意取反。
+        return -heapq.heappop(heap)
 
 
 class OfficialSolution:
@@ -94,13 +133,16 @@ class OfficialSolution:
         return inorder(root)[k - 1]
 
     def ktn_smallest_2(self, root: TreeNode, k: int) -> int:
-        """迭代。"""
+        """
+        root 是二叉搜索树，
+        使用迭代来中序遍历树，不用像递归那样遍历整棵树，可以在找到答案后停止。
+        """
         stack = []
         while True:
             while root:
                 stack.append(root)
                 root = root.left
-
+        
             root = stack.pop()
             k -= 1
             if not k:
