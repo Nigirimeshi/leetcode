@@ -49,52 +49,58 @@ randomSet.getRandom();
 时间复杂度：getRandom 时间复杂度为 O(1)，
  - insert 和 remove 平均时间复杂度为 O(1)，
    在最坏情况下为 O(N) 当元素数量超过当前分配的动态数组和哈希表的容量导致空间重新分配时。
-空间复杂度：O(N)，在动态数组和哈希表分别存储了 NN 个元素的信息。
+空间复杂度：O(N)，在动态数组和哈希表分别存储了 N 个元素的信息。
 
 """
-import unittest
 import random
+import unittest
 
 
 class RandomizedSet:
-
+    """哈希表 + 动态数组。"""
+    
     def __init__(self):
-        """
-        Initialize your data structure here.
-        """
         self.dict = {}
-        self.list = []
-
+        self.arr = []
+    
     def insert(self, val: int) -> bool:
         """
-        Inserts a value to the set. Returns true if the set did not already contain the specified element.
+        将元素添加到动态数组，
+        将元素添加到哈希表，键为元素，值为元素在动态数组的下标。
         """
         if val in self.dict:
             return False
-
-        self.dict[val] = len(self.list)
-        self.list.append(val)
+        
+        # 下标为 len(self.arr) - 1，所以先存字典。
+        self.dict[val] = len(self.arr)
+        self.arr.append(val)
         return True
-
+    
     def remove(self, val: int) -> bool:
         """
-        Removes a value from the set. Returns true if the set contained the specified element.
+        从哈希表中找出待删除元素在动态数组中的下标，
+        交换动态数组中目标元素与最后一个元素的位置，并删除最后一个元素，
+        更新哈希表中被交换元素的值（下标）。
         """
         if val not in self.dict:
             return False
-
-        # 把最后一个元素放到 val 在 list 的位置上，并改变最后一个元素的 dict 值。
-        # 相当于删掉了指定的 vak 元素。
-        idx, last_element = self.dict[val], self.list[-1]
-        self.list[idx], self.dict[last_element] = self.list[-1], idx
-        self.list.pop()
+        
+        # 找出待删除元素的下标，最后一个元素。
+        idx, last_element = self.dict[val], self.arr[-1]
+        # 将待删除元素变成最后一个元素。
+        self.arr[idx] = last_element
+        # 更新被交换后的最后一个元素下标。
+        self.dict[last_element] = idx
+        # 删除最后一个元素。
+        self.arr.pop()
         del self.dict[val]
-
-    def get_random(self) -> int:
+        return True
+    
+    def getRandom(self) -> int:
         """
-        Get a random element from the set.
+        从动态数组从随机返回一个数。
         """
-        return random.choice(self.list)
+        return random.choice(self.arr)
 
 
 # Your RandomizedSet object will be instantiated and called as such:
