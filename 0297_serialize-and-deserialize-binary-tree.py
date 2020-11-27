@@ -65,7 +65,7 @@ class Codec:
                 q.append(node.left)
                 q.append(node.right)
             else:
-                # 不存在的节点用 X 标记。
+                # 空节点用 None 标记。
                 res += 'None,'
         return res
     
