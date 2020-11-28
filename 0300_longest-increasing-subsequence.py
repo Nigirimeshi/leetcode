@@ -32,23 +32,34 @@
 
 2. 动态规划 + 贪心 + 二分查找。
 """
-import unittest
 from typing import List
+import unittest
 
 
 class Solution:
     def length_of_LIS(self, nums: List[int]) -> int:
-        """动态规划。"""
+        """
+        动态规划。
+        状态定义：dp[i] 表示 nums 前 i 个数字的最长子序列长度。
+        转移方程：dp[i] = max(dp[i], dp[j] + 1) for j in [0, i)
+        初始状态：dp[i] = 1，每个数字自身构成子序列，长度为 1。
+        返回值：max(dp)
+
+        时间复杂度：O(N^2)，遍历 dp 列表要 O(N)，计算每个 dp[i] 要 O(N)。
+        空间复杂度：O(N)。
+        """
         if not nums:
             return 0
-
+        
         n = len(nums)
+        # 初始化 dp。
         dp = [1] * n
         for i in range(n):
+            # 找出前 i 个 dp 中，小于 nums[i] 的最长子序列长度，并加 1。
             for j in range(i):
-                if nums[i] > nums[j]:
+                if nums[j] < nums[i]:
                     dp[i] = max(dp[i], dp[j] + 1)
-        # dp 中最长的递增子序列。
+        
         return max(dp)
 
 
