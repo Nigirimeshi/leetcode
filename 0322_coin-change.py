@@ -58,8 +58,8 @@ dp[11]  3   // dp[11] = min(dp[11-1], dp[11-2], dp[11-5]) + 1 = 3
 空间复杂度：O(S)。dp 数组占用。
 
 """
-import unittest
 from typing import List
+import unittest
 
 
 class OfficialSolution:
@@ -68,12 +68,40 @@ class OfficialSolution:
         # 求最小值，初始值用最大值。
         dp = [float('inf')] * (amount + 1)
         dp[0] = 0
-
+    
         for coin in coins:
             for x in range(coin, amount + 1):
                 dp[x] = min(dp[x], dp[x - coin] + 1)
-
+    
         return dp[amount] if dp[amount] != float('inf') else -1
+
+    def coin_change_2(self, coins: List[int], amount: int) -> int:
+        """
+        动态规划（自底向上）。
+        1. base case。
+           amount 为 0 时，所需硬币数量为 0。
+        2. 状态。
+           amount。
+        3. 选择。
+           coins。
+        4. dp 数组/方程。
+           dp[n] = 凑成金额 n 最少需要多少硬币。
+        """
+        # dp 数组大小为 amount + 1，初始值也为 amount + 1。
+        # 因为凑成 amount 的硬币最多只能等于 amount，用 amount + 1 相当于初始化正无穷，便于后续取最小值。
+        dp = [amount + 1] * (amount + 1)
+        # base case。
+        dp[0] = 0
+        # 循环所有状态的取值 [0, amount]。
+        for i in range(amount + 1):
+            # 循环求所有选择的最小值。
+            for coin in coins:
+                # 子问题无解，跳过。
+                if i - coin < 0:
+                    continue
+                dp[i] = min(dp[i], 1 + dp[i - coin])
+    
+        return dp[amount] if dp[amount] != (amount + 1) else - 1
 
 
 class TestOfficialSolution(unittest.TestCase):
