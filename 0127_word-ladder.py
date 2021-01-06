@@ -34,18 +34,62 @@ wordList = ["hot","dot","dog","lot","log"]
 输出: 0
 解释: endWord "cog" 不在字典中，所以无法进行转换。
 
+官方解法：
+1. 广度优先搜索。
 
 """
+from collections import defaultdict, deque
+from typing import List
 import unittest
 
 
 class Solution:
-    pass
+    def ladderLength(self, beginWord: str, endWord: str, wordList: List[str]) -> int:
+        """BFS。"""
+        # 由题可知，所有单词长度相同，算一个就行。
+        word_length = len(beginWord)
+        
+        # 建立虚拟字典。
+        # 单词的每位字母上加通配符，如 "abc" 的虚拟字典是：{'*bc': ['abc'], 'a*c': ['abc'], '*bc': ['abc']}。
+        virtual_dict = defaultdict(list)
+        for word in wordList:
+            for i in range(word_length):
+                key = word[:i] + '*' + word[i + 1:]
+                virtual_dict[key].append(word)
+        
+        # BFS
+        queue = deque()
+        queue.append((beginWord, 1))  # 记录层数。
+        # 记录访问过的节点。
+        visited = set()
+        while queue:
+            word, depth = queue.popleft()
+            # 找相近的单词，循环里已经是下一层了，所以层数是 depth + 1。
+            for i in range(word_length):
+                # 根据虚拟字典获取所有相似的单词列表。
+                key = word[:i] + '*' + word[i + 1:]
+                for similar_word in virtual_dict[key]:
+                    if similar_word == endWord:
+                        return depth + 1
+                    # 已访问过的相似单词不要再访问。
+                    if similar_word not in visited:
+                        # 记录已访问过的相似单词。
+                        visited.add(similar_word)
+                        # 和 endWorld 不同的单词，加入下一层队列。
+                        queue.append((similar_word, depth + 1))
+        # 没法转换到 endWord。
+        return 0
 
 
 class TestSolution(unittest.TestCase):
     def setUp(self) -> None:
         self.s = Solution()
+    
+    def test_ladderLength(self) -> None:
+        self.assertEqual(
+            self.s.ladderLength('hit', 'cog', ['hot', 'dot', 'dog', 'lot', 'log', 'cog']),
+            5,
+        )
 
 
 if __name__ == '__main__':
