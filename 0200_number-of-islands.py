@@ -53,50 +53,68 @@
 空间复杂度：O(min(M,N))，在最坏情况下，整个网格均为陆地，队列的大小可以达到 min(M,N)。
 
 """
-import unittest
+from collections import deque
 from typing import List
+import unittest
 
 
 class OfficialSolution:
+    def DFS(self, grid: List[List[str]], i: int, j: int):
+        row, col = len(grid), len(grid[0])
+        
+        # 搜索过的节点置为 0。
+        grid[i][j] = '0'
+        # 构造水平和垂直方向上的相邻节点坐标。
+        for x, y in [(i - 1, j), (i, j - 1), (i + 1, j), (i, j + 1)]:
+            # 继续搜索坐标有效且值为 1 的节点。
+            if 0 <= x < row and 0 <= y < col and grid[x][y] == '1':
+                self.DFS(grid, x, y)
+    
     def num_islands(self, grid: List[List[str]]) -> int:
-        """DFS。"""
-
-        def dfs(g: List[List[str]], i, j: int) -> None:
-            if not 0 <= i < len(g) or not 0 <= j < len(g[0]) or g[i][j] == '0':
-                return
-
-            g[i][j] = '0'
-            dfs(g, i - 1, j)
-            dfs(g, i + 1, j)
-            dfs(g, i, j - 1)
-            dfs(g, i, j + 1)
-
+        """
+        DFS。
+        遍历二维数组，如果一个位置为 1，则以该位置为起始节点进行深度优先搜索，
+        并将搜索过程中每个搜索到的 1 置为 0。
+        """
+        row, col = len(grid), len(grid[0])
         count = 0
-        for r in range(len(grid)):
-            for c in range(len(grid[0])):
-                if grid[r][c] == '1':
-                    dfs(grid, r, c)
-                    count += 1
-        return count
-
-    def num_islands_2(self, grid: List[List[str]]) -> int:
-        """BFS。"""
-
-        def bfs(g: List[List[str]], i, j) -> None:
-            queue = [(i, j)]
-            while queue:
-                i, j = queue.pop(0)
-                if 0 <= i < len(g) and 0 <= j < len(g[0]) and g[i][j] == '1':
-                    g[i][j] = '0'
-                    queue += [i - 1, j], [i + 1, j], [i, j - 1], [i, j + 1]
-
-        count = 0
-        for r in range(len(grid)):
-            for c in range(len(grid[0])):
-                if grid[r][c] != '1':
+        for i in range(row):
+            for j in range(col):
+                if grid[i][j] != '1':
                     continue
-                bfs(grid, r, c)
+                self.DFS(grid, i, j)
                 count += 1
+        return count
+    
+    def num_islands_2(self, grid: List[List[str]]) -> int:
+        """
+        BFS。
+        遍历二维数组，如果找到一个位置为 1，就将其加入搜索队列，开始广度优先搜索，
+        并将搜索过程中的 1 置为 0。
+        """
+        row, col = len(grid), len(grid[0])
+        count = 0
+        for i in range(row):
+            for j in range(col):
+                if grid[i][j] != '1':
+                    continue
+                
+                # 搜索到的 1 置为 0。
+                grid[i][j] = '0'
+                # 岛屿数量加 1。
+                count += 1
+                
+                queue = deque()
+                queue.append((i, j))
+                while queue:
+                    x, y = queue.popleft()
+                    # 构造水平，垂直方向的相邻节点坐标。
+                    for r, c in [(x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)]:
+                        # 将坐标合法且值为 1 的坐标加入队列。
+                        if 0 <= r < row and 0 <= c < col and grid[r][c] == '1':
+                            # 将访问过的坐标置为 0。
+                            grid[r][c] = '0'
+                            queue.append((r, c))
         return count
 
 
