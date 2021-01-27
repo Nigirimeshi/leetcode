@@ -34,6 +34,11 @@
 时间复杂度：O(NlogN)
 空间复杂度：O(N)
 
+官方解法：
+1. 哈希表。
+时间复杂度：O(N)
+空间复杂度：O(N)
+
 """
 import unittest
 from typing import List
@@ -60,6 +65,23 @@ class Solution:
                 ans = max(ans, seq_length)
                 seq_length = 1
         return ans
+
+    def longest_consecutive_2(self, nums: List[int]) -> int:
+        """哈希表。"""
+        longest_seq = 0
+        nums_set = set(nums)
+        for num in nums_set:
+            # 要枚举的数 x 在数组中一定是不存在前驱数 x-1 的，不然会从 x−1 开始尝试匹配。
+            if num - 1 not in nums_set:
+                curr_num = num
+                curr_seq = 1
+            
+                while curr_num + 1 in nums_set:
+                    curr_num += 1
+                    curr_seq += 1
+            
+                longest_seq = max(longest_seq, curr_seq)
+        return longest_seq
 
 
 class TestSolution(unittest.TestCase):
