@@ -24,6 +24,11 @@
 0 <= nums.length <= 100
 0 <= nums[i] <= 400
 
+我的解题思路：
+1. 动态规划。
+状态转移方程：dp[i] = nums[i] + max(nums[i-2], nums[i-3])  {i >= 3}
+
+
 官方解法：
 1. 动态规划。
 只有一间房屋时，则偷该房屋，得到的即最高金额。
@@ -51,6 +56,26 @@
 """
 import unittest
 from typing import List
+
+
+class Solution:
+    def rob(self, nums: List[int]) -> int:
+        """动态规划。"""
+        size = len(nums)
+        if size == 0:
+            return 0
+        if size == 1:
+            return nums[0]
+        
+        ans = [0] * size
+        ans[0:2] = nums[0:2]
+        for i in range(2, size):
+            prev_sum = ans[i - 2]
+            if i - 3 >= 0:
+                prev_sum = max(prev_sum, ans[i - 3])
+            ans[i] = nums[i] + prev_sum
+        
+        return max(ans[size - 1], ans[size - 2])
 
 
 class OfficialSolution:
