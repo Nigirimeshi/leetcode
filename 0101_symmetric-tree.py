@@ -44,6 +44,8 @@
 
 """
 import unittest
+from collections import deque
+from typing import List, Optional
 
 from structure.tree import TreeNode
 
@@ -54,16 +56,16 @@ class OfficialSolution:
         if not root:
             return True
         return self.check(root.left, root.right)
-
-    def check(self, left, right) -> bool:
+    
+    def check(self, left, right: TreeNode) -> bool:
         # 左右节点都为空。
         if not (left or right):
             return True
-
+        
         # 两个节点有一个为空。
         if not (left and right):
             return False
-
+        
         # 两个节点不等。
         if left.val != right.val:
             return False
@@ -92,6 +94,34 @@ class OfficialSolution:
             queue.append(left.right)
             queue.append(right.left)
 
+        return True
+    
+    def is_symmetric_3(self, root: TreeNode) -> bool:
+        """迭代（层序遍历，BFS）。"""
+        if not root:
+            return True
+        
+        queue = deque([root])
+        while queue:
+            values: List[Optional[int]] = []
+            size = len(queue)
+            for i in range(size):
+                node = queue.popleft()
+                if node:
+                    values.append(node.val)
+                    queue.append(node.left)
+                    queue.append(node.right)
+                else:
+                    # 用 None 填充空节点。
+                    values.append(None)
+            
+            # 比较该层节点是否对称。
+            left, right = 0, size - 1
+            while left <= right:
+                if values[left] != values[right]:
+                    return False
+                left, right = left + 1, right - 1
+        
         return True
 
 
