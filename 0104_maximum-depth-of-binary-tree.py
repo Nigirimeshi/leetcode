@@ -18,6 +18,10 @@
    15   7
 返回它的最大深度 3 。
 
+我的解题思路：
+1. 递归（自顶向下）。
+
+
 官方解题方案：
 1. 递归（深度优先搜索）
 假设左右子树最大深度分别为 l 忽然 r，那么最大深度即为 max(l, r) + 1，而左子树和右子树的最大深度又可以用同样方式进行计算。
@@ -30,12 +34,14 @@
 
 """
 import unittest
+from collections import deque
 
-from structure.tree import TreeNode, Tree
+from structure.tree import TreeNode
 
 
 class Solution:
     def max_depth(self, root: TreeNode) -> int:
+        """递归（自底向上）。"""
         if root is None:
             return 0
         return max(self.max_depth(root.left), self.max_depth(root.right)) + 1
@@ -56,6 +62,46 @@ class Solution:
                 if node.right is not None:
                     queue.append(node.right)
                 sz -= 1
+            ans += 1
+        return ans
+
+    def max_depth_2(self, root: TreeNode) -> int:
+        """递归（自顶向下）。"""
+        max_depth = 0
+    
+        def dfs(node: TreeNode, depth: int) -> None:
+            if not node:
+                nonlocal max_depth
+                max_depth = max(max_depth, depth)
+                return
+        
+            dfs(node.left, depth + 1)
+            dfs(node.right, depth + 1)
+    
+        dfs(root, 0)
+        return max_depth
+
+    def max_depth_3(self, root: TreeNode) -> int:
+        """层序遍历。
+
+        每遍历完一层，层数 + 1。
+        """
+        if not root:
+            return 0
+    
+        ans: int = 0
+        queue = deque([root])
+        while queue:
+            # 获取该层的节点数量。
+            size = len(queue)
+            # 依序遍历该层节点。
+            for i in range(size):
+                node = queue.popleft()
+                if node.left:
+                    queue.append(node.left)
+                if node.right:
+                    queue.append(node.right)
+            # 遍历完一层，层数 + 1。
             ans += 1
         return ans
 
