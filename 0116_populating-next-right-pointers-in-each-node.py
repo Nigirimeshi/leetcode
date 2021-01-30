@@ -19,106 +19,8 @@ struct Node {
 初始状态下，所有 next 指针都被设置为 NULL。
 
 示例：
-图略...
-
-输入：
-{
-    "$id": "1",
-    "left": {
-        "$id": "2",
-        "left": {
-            "$id": "3",
-            "left": null,
-            "next": null,
-            "right": null,
-            "val": 4
-        },
-        "next": null,
-        "right": {
-            "$id": "4",
-            "left": null,
-            "next": null,
-            "right": null,
-            "val": 5
-        },
-        "val": 2
-    },
-    "next": null,
-    "right": {
-        "$id": "5",
-        "left": {
-            "$id": "6",
-            "left": null,
-            "next": null,
-            "right": null,
-            "val": 6
-        },
-        "next": null,
-        "right": {
-            "$id": "7",
-            "left": null,
-            "next": null,
-            "right": null,
-            "val": 7
-        },
-        "val": 3
-    },
-    "val": 1
-}
-
-输出：
-{
-    "$id": "1",
-    "left": {
-        "$id": "2",
-        "left": {
-            "$id": "3",
-            "left": null,
-            "next": {
-                "$id": "4",
-                "left": null,
-                "next": {
-                    "$id": "5",
-                    "left": null,
-                    "next": {
-                        "$id": "6",
-                        "left": null,
-                        "next": null,
-                        "right": null,
-                        "val": 7
-                    },
-                    "right": null,
-                    "val": 6
-                },
-                "right": null,
-                "val": 5
-            },
-            "right": null,
-            "val": 4
-        },
-        "next": {
-            "$id": "7",
-            "left": {
-                "$ref": "5"
-            },
-            "next": null,
-            "right": {
-                "$ref": "6"
-            },
-            "val": 3
-        },
-        "right": {
-            "$ref": "4"
-        },
-        "val": 2
-    },
-    "next": null,
-    "right": {
-        "$ref": "7"
-    },
-    "val": 1
-}
-
+输入：root = [1,2,3,4,5,6,7]
+输出：[1,#,2,3,#,4,5,6,7,#]
 解释：给定二叉树如图 A 所示，你的函数应该填充它的每个 next 指针，以指向其下一个右侧节点，如图 B 所示。
 
 提示：
@@ -148,8 +50,10 @@ struct Node {
 import unittest
 from collections import deque
 
-
 # Definition for a Node.
+from typing import Optional
+
+
 class Node:
     def __init__(self, val: int = 0, left: 'Node' = None, right: 'Node' = None, next: 'Node' = None):
         self.val = val
@@ -191,10 +95,39 @@ class Solution:
                 # 该层所有节点遍历过了，且下一层的节点已经加入队列了，用 None 分割下一层。
                 if len(queue) != 0:
                     queue.append(None)
-
+    
                 pre_node.next = None
                 pre_node = None
 
+        return root
+
+    def connect2(self, root: Node) -> Node:
+        """层序遍历（迭代）。"""
+        if not root:
+            return root
+    
+        queue = deque([root])
+        while queue:
+            # 缓存该层上一个节点。
+            # 刚进入该层时忽略。
+            prev_node: Optional[Node] = None
+        
+            # 该层节点数量。
+            size = len(queue)
+            for i in range(size):
+                node = queue.popleft()
+            
+                # 用该层上一个节点指向当前节点。
+                if prev_node:
+                    prev_node.next = node
+            
+                if node.left:
+                    queue.append(node.left)
+                if node.right:
+                    queue.append(node.right)
+            
+                # 记录当前节点，下次循环时再赋值 next。
+                prev_node = node
         return root
 
 
