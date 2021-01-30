@@ -42,9 +42,13 @@ struct Node {
 1. BFS。（嵌套循环遍历）
 
 时间复杂度：O(N)。N 为树中所有节点个数。
-
 空间复杂度：O(N)。这是一棵完美二叉树，它的最后一个层级包含 N/2 个节点。
  - 广度优先遍历的复杂度取决于一个层级上的最大元素数量。这种情况下空间复杂度为 O(N)。
+
+2. 使用已建立的 next 指针。
+
+时间复杂度：O(N)
+空间复杂度：O(1)
 
 """
 import unittest
@@ -149,6 +153,31 @@ class OfficialSolution:
                     queue.append(node.left)
                 if node.right:
                     queue.append(node.right)
+        return root
+
+    def connect2(self, root: Node) -> Node:
+        """使用已建立的 next 指针。"""
+        if not root:
+            return root
+    
+        leftmost = root
+        while leftmost.left:
+            # 遍历该层节点组成的链表，为下一层的节点更新 next 指针。
+            head = leftmost
+            while head:
+                # 1. 连接相同父节点的左右子树。
+                head.left.next = head.right
+            
+                # 2. 连接不同父节点的右子树和左子树。
+                # 若上一层的 next 指针已连接，可以通过 head.next 访问同层右侧的父节点。
+                if head.next:
+                    head.right.next = head.next.left
+            
+                # 继续向右移动指针。
+                head = head.next
+        
+            # 去下一层的最左节点。
+            leftmost = leftmost.left
         return root
 
 
