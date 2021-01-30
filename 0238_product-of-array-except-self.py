@@ -33,8 +33,8 @@
 空间复杂度：O(1) 输出数组不被视为额外空间。
 
 """
-from typing import List
 import unittest
+from typing import List
 
 
 class OfficialSolution:
