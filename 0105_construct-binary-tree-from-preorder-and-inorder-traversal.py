@@ -48,7 +48,7 @@ inorder  [[9], 3, [15, 20, 7]]
 
 """
 import unittest
-from typing import List
+from typing import List, Optional
 
 from structure.tree import TreeNode
 
@@ -78,6 +78,36 @@ class OfficialSolution:
 
         n = len(preorder)
         return build(0, n - 1, 0, n - 1)
+
+    def build_tree_2(self, preorder: List[int], inorder: List[int]) -> TreeNode:
+        """递归。"""
+        # 根据中序序列构造哈希表。
+        idx = {v: i for i, v in enumerate(inorder)}
+    
+        def helper(p_start, p_end, i_start, i_end: int) -> Optional[TreeNode]:
+            if p_start > p_end:
+                return None
+        
+            # 前序序列第一个元素即为根节点元素。
+            root_val = preorder[p_start]
+            # 构造根节点。
+            root = TreeNode(root_val)
+        
+            # 获取根节点元素在中序序列中的下标位置。
+            i_root_index = idx[root_val]
+            # 计算左子树节点个数。
+            # 中序序列中根节点左侧元素个数即为左子树节点个数。
+            left_child_num = i_root_index - i_start
+        
+            # 递归构造左子树。
+            root.left = helper(p_start + 1, p_start + left_child_num, i_start, i_root_index - 1)
+            # 递归构造右子树。
+            root.right = helper(p_start + left_child_num + 1, p_end, i_root_index + 1, i_end)
+        
+            return root
+    
+        n = len(inorder)
+        return helper(0, n - 1, 0, n - 1)
 
 
 if __name__ == '__main__':
