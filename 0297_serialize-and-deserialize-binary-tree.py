@@ -40,9 +40,9 @@
 3. DFS 先序遍历（用迭代器优化）。
 
 """
-from collections import deque
-from typing import Iterator, List
 import unittest
+from collections import deque
+from typing import Iterator, List, Optional
 
 from structure.tree import TreeNode
 
@@ -53,7 +53,7 @@ class Codec:
     def serialize(self, root: TreeNode) -> str:
         """将树编码为单个字符串。"""
         if not root:
-            return []
+            return 'None'
         
         q = deque()
         q.append(root)
@@ -69,11 +69,11 @@ class Codec:
                 res += 'None,'
         return res
     
-    def deserialize(self, data: str) -> TreeNode:
+    def deserialize(self, data: str) -> Optional[TreeNode]:
         """将您的编码数据解码为树。"""
-        if not data:
+        if data == 'None':
             return None
-
+        
         data = data.split(',')
         root = TreeNode(data.pop(0))
         q = [root]
@@ -144,12 +144,12 @@ class Codec3:
         # 将字符串转成迭代器。
         iterator = iter(data.split(','))
         return self.build_tree(iterator)
-    
-    def build_tree(self, iterator: Iterator) -> TreeNode:
+
+    def build_tree(self, iterator: Iterator) -> Optional[TreeNode]:
         val = next(iterator)
         if val == 'None':
             return None
-        
+    
         node = TreeNode(int(val))
         node.left = self.build_tree(iterator)
         node.right = self.build_tree(iterator)
