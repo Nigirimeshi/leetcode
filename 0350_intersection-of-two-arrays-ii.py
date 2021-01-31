@@ -53,9 +53,9 @@
 空间复杂度：O(min(m, n))
 
 """
+import unittest
 from collections import Counter
 from typing import List
-import unittest
 
 
 class Solution:
@@ -79,13 +79,13 @@ class OfficialSolution:
         # 为了降低空间复杂度，首先遍历较短的数组并在哈希表中记录每个数字以及对应出现的次数，然后遍历较长的数组得到交集。
         if len(nums1) > len(nums2):
             return self.intersect(nums2, nums1)
-            
+        
             # 计算较短数组中元素次数。
         counts = Counter(nums1)
-        
+    
         ans = []
-        for num in nums2:
-            if counts[num] > 0:
+        for num in iter(nums2):
+            if num in counts:
                 ans.append(num)
                 # 将哈希表中对应数字减 1，若等于 0 了，直接删除。
                 counts[num] -= 1
