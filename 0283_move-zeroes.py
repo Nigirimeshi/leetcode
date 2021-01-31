@@ -34,8 +34,8 @@
 空间复杂度：O(1)
 
 """
-from typing import List
 import unittest
+from typing import List
 
 
 class Solution:
@@ -74,7 +74,7 @@ class OfficialSolution:
     def move_zeroes_2(self, nums: List[int]) -> None:
         """一次遍历（快排思想，交换元素）。"""
         n = len(nums)
-        
+
         # j 指向 0 元素。
         j = 0
         # i 持续向右移动。
@@ -84,6 +84,19 @@ class OfficialSolution:
                 # 不等于 0 的放左边，等于 0 的放右边。
                 nums[i], nums[j] = nums[j], nums[i]
                 j += 1
+
+    def move_zeroes_3(self, nums: List[int]) -> None:
+        """双指针。"""
+        n = len(nums)
+        left, right = 0, 0
+        while right < n:
+            # right 从左向右移动，直到指向非 0 元素。
+            if nums[right] != 0:
+                # 交换 left，right 指向的元素。
+                nums[left], nums[right] = nums[right], nums[left]
+                # 右移 left。
+                left += 1
+            right += 1
 
 
 class TestSolution(unittest.TestCase):
