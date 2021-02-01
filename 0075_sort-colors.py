@@ -42,8 +42,8 @@
    - 若 nums[curr] == 2：交换 curr 和第 p2 个元素，并将 p2 指针左移；
    - 若 nums[curr] == 1：将指针 curr 右移。
 
-时间复杂度 :由于对长度 NN的数组进行了一次遍历，时间复杂度为O(N)O(N) 。
-空间复杂度 :由于只使用了常数空间，空间复杂度为O(1)O(1) 。
+时间复杂度: 由于对长度 N 的数组进行了一次遍历，时间复杂度为 O(N) 。
+空间复杂度: 由于只使用了常数空间，空间复杂度为 O(1) 。
 
 """
 import unittest
@@ -69,19 +69,36 @@ class Solution:
 
 class OfficialSolution:
     def sort_colors(self, nums: List[int]) -> None:
-        """一次遍历，交换元素。"""
+        """双指针。
+
+        使用指针 p0 交换 0，指针 p2 交换 2。
+        遍历列表，找出所有的 0 交换至列表头部，找出所有的 2 交换至列表的尾部。
+        由于 p2 是从右向左移动的，因此当我们从左向右遍历列表时，若遍历到的位置超过了 p2，就可以停止遍历了。
+        从左向右遍历列表，设当前遍历的位置下标是 i，对应元素为 nums[i]:
+         - 若找到了 0，将其与 nums[p0] 交换，并使 p0 + 1；
+         - 若找到了 2，将其与 nums[p2] 交换，并使 p2 - 1；
+            - nums[i] 与 nums[p2] 交换后，还可能是 2，因此需要不断的将其与 nums[p2] 交换，
+              直到新的 nums[i] 不为 2。
+
+        时间复杂度：O(N)
+        空间复杂度：O(1)
+        """
         n = len(nums)
-        p0, curr, p2 = 0, 0, n - 1
-        while curr <= p2:
-            if nums[curr] == 0:
-                nums[curr], nums[p0] = nums[p0], nums[curr]
-                curr += 1
-                p0 += 1
-            elif nums[curr] == 2:
-                nums[curr], nums[p2] = nums[p2], nums[curr]
+        # p0 从左向右移动，p2 从右向左移动。
+        p0, p2 = 0, n - 1
+        i = 0
+        # 当 i > p2 时，说明已排序完。
+        while i <= p2:
+            # 持续交换，直到交换后的新的 nums[i] 不等于 2。
+            while i <= p2 and nums[i] == 2:
+                nums[i], nums[p2] = nums[p2], nums[i]
                 p2 -= 1
-            else:
-                curr += 1
+            
+            if nums[i] == 0:
+                nums[i], nums[p0] = nums[p0], nums[i]
+                p0 += 1
+            
+            i += 1
 
 
 class TestSolution(unittest.TestCase):
