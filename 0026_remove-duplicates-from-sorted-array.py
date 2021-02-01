@@ -36,14 +36,29 @@ class Solution:
         时间复杂度：O(n)，假设数组的长度是 n，那么 slow 和 fast 分别最多遍历 n 步。
         空间复杂度：O(1)。
         """
-        if len(nums) == 0:
-            return 0
+        n = len(nums)
+        if n == 0:
+            return n
+    
         slow = 0
-        for fast in range(len(nums)):
+        for fast in range(n):
             if nums[slow] != nums[fast]:
                 slow += 1
                 nums[slow] = nums[fast]
         return slow + 1
+
+    def removeDuplicates2(self, nums: List[int]) -> int:
+        """快慢指针。"""
+        n = len(nums)
+        if n <= 1:
+            return n
+    
+        i = 1
+        for j in range(1, n):
+            if nums[j] != nums[i - 1]:
+                nums[i] = nums[j]
+                i += 1
+        return i
 
 
 def main():
