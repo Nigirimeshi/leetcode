@@ -20,8 +20,7 @@ nums2 = [2,5,6],       n = 3
 我的解题思路：
 1. 先将 nums2 合并到 nums1 上，填满原本多余的 0，然后排序。
 
-我的解法：
-1. 先合并，后排序。
+2. 双指针（插入排序思想）。
 
 官方解法：
 1. 先合并，后排序。(这种方法没有利用两个数组本身已经有序这一点。)
@@ -40,8 +39,8 @@ nums2 = [2,5,6],       n = 3
 空间复杂度：O(1)
 
 """
-from typing import List
 import unittest
+from typing import List
 
 
 class Solution:
@@ -52,6 +51,23 @@ class Solution:
         for i in range(n):
             nums1[m + i] = nums2[i]
         nums1.sort()
+    
+    def merge2(self, nums1: List[int], m: int, nums2: List[int], n: int) -> None:
+        """双指针（插入排序思想）。
+
+        首先选择 nums2 第 1 个元素，将其插入到 nums1 中正确的位置；
+        然后再从 nums2 选择第 2 位元素，沿着 nums1 中上次插入的位置，向右寻找合适位置并插入，依此类推。
+        """
+        if n == 0:
+            return None
+        
+        for i in range(n):
+            nums1[m + i] = nums2[i]
+            for j in range(m + i, 0, -1):
+                if nums1[j] < nums1[j - 1]:
+                    nums1[j], nums1[j - 1] = nums1[j - 1], nums1[j]
+                else:
+                    break
 
 
 class OfficialSolution:
@@ -87,7 +103,7 @@ class OfficialSolution:
         因为 nums1 尾部是 0，因此从尾部改写 nums1，不需要额外的空间。
         设置指针 p1，p2 分别指向 m-1，n-1，循环左移，且 p1 >= 0 and p2 >= 0；
         每次将 nums1[p1] 和 nums2[p2] 中较大值放入 nums1 的尾部；
-        最后再将 nums2 中剩余元素
+        最后再将 nums2 中剩余元素放入 nums1。
         """
         p1 = m - 1
         p2 = n - 1
