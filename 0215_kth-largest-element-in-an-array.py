@@ -36,8 +36,8 @@
 
 """
 import heapq
-from typing import List
 import unittest
+from typing import List
 
 
 class Solution:
@@ -60,7 +60,7 @@ class OfficialSolution:
         target_index = n - k
         left, right = 0, n - 1
         while True:
-            index = self.partition(nums, left, right)
+            index = self._partition(nums, left, right)
             if index == target_index:
                 return nums[index]
             elif index < target_index:
@@ -69,7 +69,7 @@ class OfficialSolution:
             else:
                 right = index - 1
 
-    def partition(self, nums: List[int], left, right: int) -> int:
+    def _partition(self, nums: List[int], left, right: int) -> int:
         """快排分区。"""
         pivot = left
         i, j = left, right
