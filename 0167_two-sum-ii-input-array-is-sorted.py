@@ -46,6 +46,17 @@ numbers 按 递增顺序 排列
 时间复杂度：O(NlogN)
 空间复杂度：O(1)
 
+2. 双指针。
+
+设置指针 left，right 分别指向数组最左端和最右端下标。
+比较两指针指向元素之和：
+ - 若和等于 target，则返回 left + 1, right + 1；
+ - 若和大于 target，则令 right 向左移动；
+ - 若和小于 target，则令 left 向右移动。
+
+时间复杂度：O(N)
+空间复杂度：O(1)
+
 """
 import unittest
 from typing import Dict, List, Union
@@ -100,6 +111,20 @@ class Solution:
                 # 修改左边界，向右查找。
                 else:
                     low = mid + 1
+        return [-1, -1]
+
+    def twoSum3(self, numbers: List[int], target: int) -> List[int]:
+        """双指针。"""
+        n = len(numbers)
+        left, right = 0, n - 1
+        while left < right:
+            total = numbers[left] + numbers[right]
+            if total == target:
+                return [left + 1, right + 1]
+            elif total > total:
+                right -= 1
+            else:
+                left += 1
         return [-1, -1]
 
 
