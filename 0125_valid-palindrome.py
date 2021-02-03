@@ -36,13 +36,33 @@ import unittest
 class Solution:
     def is_palindrome(self, s: str) -> bool:
         ss = ''.join(c.lower() for c in s if c.isalnum())
-
+    
         n = len(ss)
         left, right = 0, n - 1
-
+    
         while left < right:
             if ss[left] != ss[right]:
                 return False
+            left, right = left + 1, right - 1
+        return True
+
+    def is_palindrome2(self, s: str) -> bool:
+        """双指针。"""
+        if s.strip() == '':
+            return True
+    
+        left, right = 0, len(s) - 1
+        while left < right:
+            if not s[left].isalnum():
+                left += 1
+                continue
+            if not s[right].isalnum():
+                right -= 1
+                continue
+        
+            if s[left].lower() != s[right].lower():
+                return False
+        
             left, right = left + 1, right - 1
         return True
 
