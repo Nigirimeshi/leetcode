@@ -67,6 +67,14 @@ class Solution:
                 break
         return ans
 
+    def trailing_zeroes2(self, n: int) -> int:
+        """计算因子 5。"""
+        count = 0
+        while n > 0:
+            count += n // 5
+            n = n // 5
+        return count
+
 
 class OfficialSolution:
     def trailing_zeroes(self, n: int) -> int:
