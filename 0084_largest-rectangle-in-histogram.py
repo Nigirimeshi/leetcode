@@ -83,7 +83,7 @@ class OfficialSolution:
         # 遍历每个柱体。
         for i in range(len(heights)):
             # 若当前柱体高度小于栈顶柱体，即可计算面积。
-            while stack and heights[stack[-1]] < heights[i]:
+            while stack and heights[i] < heights[stack[-1]]:
                 # 弹出栈顶元素，获取对应柱体高度。
                 h = heights[stack.pop()]
                 # 计算面积 = 弹出栈顶元素的高度 * (当前遍历的柱体下标（右边界） - 现在的栈顶柱体下标（左边界） - 1)
@@ -101,7 +101,7 @@ class TestSolution(unittest.TestCase):
     def test_largest_rectangle_area(self) -> None:
         self.assertEqual(
             10,
-            self.s.largest_rectangle_area([2, 1, 5, 6, 2, 3]),
+            self.s.largest_rectangle_area_2([2, 1, 5, 6, 2, 3]),
         )
 
 
