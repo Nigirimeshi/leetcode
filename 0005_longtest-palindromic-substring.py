@@ -51,6 +51,7 @@ import unittest
 
 class OfficialSolution:
     def longest_palindrome(self, s: str) -> str:
+        """动态规划。"""
         n = len(s)
         if n < 2:
             return s
@@ -60,6 +61,7 @@ class OfficialSolution:
 
         # 初始化 dp。
         dp = [[False] * n for _ in range(n)]
+        # 单个字符一定是回文串，dp[i][i] = True。
         for i in range(n):
             dp[i][i] = True
 
