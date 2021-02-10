@@ -83,13 +83,74 @@ class OfficialSolution:
 
         return s[begin:begin + max_len]
 
+    def longest_palindrome_2(self, s: str) -> str:
+        """
+        动态规划。
+        
+        状态：dp[i][j] 表示 s 下标 [i, j] 的子串是否为回文串。
+        状态转移方程：
+         - 易知：若字符串去除头尾字符的子串也是回文串，且字符串的头尾字符相等，则该字符串是回文串。
+         - dp[i][j] = dp[i+1][j-1] and (s[i] == s[j])
+        初始值：
+         - 空字符串是回文串。
+         - 单个字符是回文串 dp[i][i] = True。
+
+         时间复杂度：O(n^2)
+         空间复杂度：O(n^2)
+        """
+        n = len(s)
+        ans = ''
+    
+        dp = [[False] * n for _ in range(n)]
+        # 枚举字符串的长度。
+        for length in range(n):
+            # 枚举字符串的起始位置 i，结束位置 j = i + length。
+            for i in range(n):
+                j = i + length
+                if j >= n:
+                    break
+            
+                # 单个字符串是回文串。
+                if length == 0:
+                    dp[i][j] = True
+                # 2 个字符的字符串，若 2 字符相等，则为回文串。
+                elif length == 1:
+                    dp[i][j] = (s[i] == s[j])
+                # 字符大于 2 个的字符串，若其子串是回文串，且其头尾字符相同，则该字符串为回文串。
+                else:
+                    dp[i][j] = dp[i + 1][j - 1] and (s[i] == s[j])
+            
+                # 更新最长回文串。
+                if dp[i][j] and length + 1 > len(ans):
+                    ans = s[i:j + 1]
+        return ans
+
 
 class TestOfficialSolution(unittest.TestCase):
     def setUp(self) -> None:
-        self.s = TestOfficialSolution()
-
+        self.s = OfficialSolution()
+    
     def test_longest_palindrome(self) -> None:
-        pass
+        self.assertEqual(
+            'bab',
+            self.s.longest_palindrome_2('babad')
+        )
+        self.assertEqual(
+            'bb',
+            self.s.longest_palindrome_2('cbbd')
+        )
+        self.assertEqual(
+            'a',
+            self.s.longest_palindrome_2('a')
+        )
+        self.assertEqual(
+            'a',
+            self.s.longest_palindrome_2('ac')
+        )
+        self.assertEqual(
+            'bb',
+            self.s.longest_palindrome_2('cbbd')
+        )
 
 
 if __name__ == '__main__':
