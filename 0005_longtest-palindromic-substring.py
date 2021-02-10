@@ -45,8 +45,18 @@
 时间复杂度：O(N^2)。
 空间复杂度：，二维 dp 问题，一个状态得用二维有序数对表示，因此空间复杂度是 O(N^2)。
 
+2. 中心扩散法。
+子串边界情况：1 或 2 个字符串。
+可以枚举每个子串边界情况，并从对应的子串不断从中心向两边扩散，
+ - 若两边的字母相同，则可以继续扩散。
+ - 若两边的字母不同，则停止扩散，因为在这之后不可能是回文串了。
+
+时间复杂度：O(n^2)
+空间复杂度：O(1)
+
 """
 import unittest
+from typing import List
 
 
 class OfficialSolution:
@@ -100,7 +110,7 @@ class OfficialSolution:
         """
         n = len(s)
         ans = ''
-    
+
         dp = [[False] * n for _ in range(n)]
         # 枚举字符串的长度。
         for length in range(n):
@@ -109,7 +119,7 @@ class OfficialSolution:
                 j = i + length
                 if j >= n:
                     break
-            
+
                 # 单个字符串是回文串。
                 if length == 0:
                     dp[i][j] = True
@@ -119,11 +129,36 @@ class OfficialSolution:
                 # 字符大于 2 个的字符串，若其子串是回文串，且其头尾字符相同，则该字符串为回文串。
                 else:
                     dp[i][j] = dp[i + 1][j - 1] and (s[i] == s[j])
-            
+
                 # 更新最长回文串。
                 if dp[i][j] and length + 1 > len(ans):
                     ans = s[i:j + 1]
         return ans
+
+    def longest_palindrome_3(self, s: str) -> str:
+        """
+        中心扩散法。
+        """
+    
+        def extend(s: str, left: int, right: int) -> List[int, int]:
+            while left >= 0 and right < len(s) and s[left] == s[right]:
+                left -= 1
+                right += 1
+            return [left + 1, right - 1]
+    
+        start, end = 0, 0
+        for i in range(len(s)):
+            # 从单个字符开始扩散。
+            left1, right1 = extend(s, i, i)
+            # 从 2 个字符开始扩散。
+            left2, right2 = extend(s, i, i + 1)
+        
+            # 更新最长回文子串起始、结束下标。
+            if right1 - left1 > end - start:
+                start, end = left1, right1
+            if right2 - left2 > end - start:
+                start, end = left2, right2
+        return s[start:end + 1]
 
 
 class TestOfficialSolution(unittest.TestCase):
