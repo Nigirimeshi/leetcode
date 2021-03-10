@@ -54,8 +54,24 @@ prerequisites[i] 中的所有课程对互不相同。
 时间复杂度：O(N+M)，遍历图需要访问所有节点和邻边，N 是节点数量，M 是邻边数量。
 空间复杂度：O(N+M)，建立邻接表需要的空间，adjacency 长为 N，存储了 M 条邻边的数据。
 
+2. 入度表 - BFS。
+算法：
+1）统计每个课程的入度，生成入度表（indegress）。
+2）使用队列（queue），将入度为 0 的节点入队。
+3）当队列（queue）非空时，依次将队首节点出队，并在课程安排图中删除该节点（prev）：
+3.1）并不是真的删除，而是通过将此节点（prev）的所有邻接节点（curr）的入度 - 1，即 indegress[curr] -= 1。
+3.2）当入度 - 1 后，邻接节点的入度若为 0，则说明 curr 的所有的前驱节点已被 “删除”，此时将 curr 入队。
+4）在每次 prev 出队时，使 numCourses - 1，
+   - 若整个课程安排表是有向无环图，则所有节点一定都入队和出队过，即完成拓扑排序过。
+     换句话说，若图中存在环，一定有节点的入度始终不为 0。
+   - 因此，拓扑排序出队次数等于课程个数，返回 numCourses == 0 判断是否存在环。
+   
+时间复杂度：O(N+M)，历一个图需要访问所有节点和所有临边，N 和 M 分别为节点数量和临边数量。
+空间复杂度：O(N+M)，为建立邻接表所需额外空间，adjacency 长度为 N ，并存储 M 条临边的数据。
+
 """
 import unittest
+from collections import deque
 from typing import List
 
 
@@ -98,6 +114,37 @@ class Solution:
         flags[i] = -1
         # 当前节点及其邻接节点，不存在环。
         return True
+
+    def canFinish2(self, numCourses: int, prerequisites: List[List[int]]) -> bool:
+        # 初始化入度表。
+        indegress: List[int] = [0] * numCourses
+        # 初始化邻接表。
+        adjacency: List[List[int]] = [[] for _ in range(numCourses)]
+        # 初始化入度表，邻接表。
+        for curr, prev in prerequisites:
+            indegress[curr] += 1
+            adjacency[prev].append(curr)
+
+        # 初始化队列。
+        queue = deque()
+        # 将入度为 0 的节点入队。
+        for i in range(len(indegress)):
+            if indegress[i] == 0:
+                queue.append(i)
+
+        while queue:
+            prev = deque.popleft()
+            # 将该节点的所有邻接节点的入度 - 1。
+            for curr in adjacency[prev]:
+                indegress[curr] -= 1
+                # 若邻接节点的入度变为 0，说明其不存在前驱节点了，则将其加入队列。
+                if indegress[curr] == 0:
+                    queue.append(curr)
+
+            # 每出队一个节点，就使 numCourses - 1，不存在环时，出队次数应等于课程个数。
+            numCourses -= 1
+        # 若图中存在环，则一定有节点的入度不为 0。
+        return numCourses == 0
 
 
 class TestSolution(unittest.TestCase):
