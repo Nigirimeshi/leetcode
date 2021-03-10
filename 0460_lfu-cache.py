@@ -233,15 +233,28 @@ class LFUCache:
         linked_list = self.freq_map[self.min_freq]
         node = linked_list.last_node()
         linked_list.delete(node)
+
+        # 删除节点和 key。
         del self.node_map[node.key]
+
         # 若删除后，链表为空，则删除链表。
         if linked_list.is_empty():
             del self.freq_map[node.freq]
 
 
 class TestSolution(unittest.TestCase):
-    def setUp(self) -> None:
-        self.lfu = LFUCache()
+    def test_lfu_cache(self) -> None:
+        lru = LFUCache(3)
+        lru.put(1, 1)
+        self.assertEqual(1, lru.get(1))
+        lru.put(2, 2)
+        lru.put(3, 3)
+        self.assertEqual(3, lru.get(3))
+        lru.put(4, 4)
+        self.assertEqual(-1, lru.get(2))
+        self.assertEqual(1, lru.get(1))
+        self.assertEqual(3, lru.get(3))
+        self.assertEqual(4, lru.get(4))
 
 
 if __name__ == "__main__":
