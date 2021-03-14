@@ -51,8 +51,6 @@
 时间复杂度：O(n)
 空间复杂度：O(1)
 
-
-
 """
 import unittest
 from typing import List
@@ -66,7 +64,7 @@ class Solution:
             return 0
         if size == 1:
             return nums[0]
-        
+
         ans = [0] * size
         ans[0:2] = nums[0:2]
         for i in range(2, size):
@@ -74,7 +72,7 @@ class Solution:
             if i - 3 >= 0:
                 prev_sum = max(prev_sum, ans[i - 3])
             ans[i] = nums[i] + prev_sum
-        
+
         return max(ans[size - 1], ans[size - 2])
 
 
@@ -123,5 +121,5 @@ class TestOfficialSolution(unittest.TestCase):
         )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
