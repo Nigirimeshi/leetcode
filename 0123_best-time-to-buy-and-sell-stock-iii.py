@@ -104,7 +104,6 @@ class Solution:
 
     def max_profit_3(self, prices: List[int]) -> int:
         """动态规划 - 穷举（空间复杂度为 1）"""
-        n = len(prices)
         """
         dp[i][0][0] = 0         # 没买过股票，也没持有股票，利润为 0。
         dp[i][0][1] = -infinity # 没买过股票，却持有股票，不可能，用负无穷表示。
