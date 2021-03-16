@@ -50,6 +50,9 @@ struct Node {
 时间复杂度：O(N)
 空间复杂度：O(1)
 
+3. 递归。
+
+
 """
 import unittest
 from collections import deque
@@ -59,7 +62,13 @@ from typing import Optional
 
 
 class Node:
-    def __init__(self, val: int = 0, left: 'Node' = None, right: 'Node' = None, next: 'Node' = None):
+    def __init__(
+        self,
+        val: int = 0,
+        left: "Node" = None,
+        right: "Node" = None,
+        next: "Node" = None,
+    ):
         self.val = val
         self.left = left
         self.right = right
@@ -99,7 +108,7 @@ class Solution:
                 # 该层所有节点遍历过了，且下一层的节点已经加入队列了，用 None 分割下一层。
                 if len(queue) != 0:
                     queue.append(None)
-    
+
                 pre_node.next = None
                 pre_node = None
 
@@ -109,27 +118,27 @@ class Solution:
         """层序遍历（迭代）。"""
         if not root:
             return root
-    
+
         queue = deque([root])
         while queue:
             # 缓存该层上一个节点。
             # 刚进入该层时忽略。
             prev_node: Optional[Node] = None
-        
+
             # 该层节点数量。
             size = len(queue)
             for i in range(size):
                 node = queue.popleft()
-            
+
                 # 用该层上一个节点指向当前节点。
                 if prev_node:
                     prev_node.next = node
-            
+
                 if node.left:
                     queue.append(node.left)
                 if node.right:
                     queue.append(node.right)
-            
+
                 # 记录当前节点，下次循环时再赋值 next。
                 prev_node = node
         return root
@@ -159,7 +168,7 @@ class OfficialSolution:
         """使用已建立的 next 指针。"""
         if not root:
             return root
-    
+
         leftmost = root
         while leftmost.left:
             # 遍历该层节点组成的链表，为下一层的节点更新 next 指针。
@@ -167,19 +176,36 @@ class OfficialSolution:
             while head:
                 # 1. 连接相同父节点的左右子树。
                 head.left.next = head.right
-            
+
                 # 2. 连接不同父节点的右子树和左子树。
                 # 若上一层的 next 指针已连接，可以通过 head.next 访问同层右侧的父节点。
                 if head.next:
                     head.right.next = head.next.left
-            
+
                 # 继续向右移动指针。
                 head = head.next
-        
+
             # 去下一层的最左节点。
             leftmost = leftmost.left
         return root
 
+    def connect3(self, root: Node) -> Node:
+        """递归。"""
+        if not root:
+            return root
 
-if __name__ == '__main__':
+        self.connect_left_and_right(root.left, root.right)
+        return root
+
+    def connect_left_and_right(self, left: "Node", right: "Node") -> None:
+        if not left or not right:
+            return
+
+        left.next = right
+        self.connect_left_and_right(left.left, left.right)
+        self.connect_left_and_right(right.left, right.right)
+        self.connect_left_and_right(left.right, right.left)
+
+
+if __name__ == "__main__":
     unittest.main()
