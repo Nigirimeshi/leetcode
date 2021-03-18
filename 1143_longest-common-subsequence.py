@@ -40,6 +40,7 @@
 
 """
 import unittest
+from typing import List
 
 
 class Solution:
@@ -48,7 +49,7 @@ class Solution:
         n, m = len(text1), len(text2)
         if n * m == 0:
             return 0
-        
+
         dp = [[0] * (m + 1) for _ in range(n + 1)]
         for i in range(1, n + 1):
             for j in range(1, m + 1):
@@ -58,25 +59,57 @@ class Solution:
                     dp[i][j] = max(dp[i - 1][j], dp[i][j - 1])
         return dp[-1][-1]
 
+    def longest_common_subsequence_2(self, text1: str, text2: str) -> int:
+        """动态规划。"""
+        n, m = len(text1), len(text2)
+        dp: List[List[int]] = [[0 for __ in range(m)] for _ in range(n)]
+
+        # base case
+        if text1[0] == text2[0]:
+            dp[0][0] = 1
+
+        # 初始化第一列。
+        for i in range(1, n):
+            if text1[i] == text2[0]:
+                dp[i][0] = 1
+            else:
+                dp[i][0] = dp[i - 1][0]
+
+        # 初始化第一行。
+        for j in range(1, m):
+            if text2[j] == text1[0]:
+                dp[0][j] = 1
+            else:
+                dp[0][j] = dp[0][j - 1]
+
+        # 状态转移。
+        for i in range(1, n):
+            for j in range(1, m):
+                if text1[i] == text2[j]:
+                    dp[i][j] = dp[i - 1][j - 1] + 1
+                else:
+                    dp[i][j] = max(dp[i - 1][j], dp[i][j - 1])
+        return dp[-1][-1]
+
 
 class TestSolution(unittest.TestCase):
     def setUp(self) -> None:
         self.s = Solution()
-    
+
     def test_longest_common_subsequence(self) -> None:
         self.assertEqual(
-            self.s.longest_common_subsequence('abcde', 'ace'),
+            self.s.longest_common_subsequence("abcde", "ace"),
             3,
         )
         self.assertEqual(
-            self.s.longest_common_subsequence('', ''),
+            self.s.longest_common_subsequence("", ""),
             0,
         )
         self.assertEqual(
-            self.s.longest_common_subsequence('abc', 'abc'),
+            self.s.longest_common_subsequence("abc", "abc"),
             3,
         )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
