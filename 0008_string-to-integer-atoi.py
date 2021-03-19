@@ -68,6 +68,7 @@ end	        end	    end	        end	        end
 """
 import re
 import unittest
+from typing import List
 
 
 class Solution:
@@ -119,8 +120,8 @@ class Solution:
         return num if not negative_number else -num
 
 
-INT_MAX = 2 ** 31 - 1
-INT_MIN = -2 ** 31
+MAX = 2 ** 31 - 1
+MIN = -2 ** 31
 
 
 class Automaton:
@@ -156,7 +157,7 @@ class Automaton:
         self.state = self.table[self.state][self.get_col(c)]
         if self.state == 'in_number':
             self.ans = self.ans * 10 + int(c)
-            self.ans = min(self.ans, INT_MAX) if self.sign == 1 else min(self.ans, -INT_MIN)
+            self.ans = min(self.ans, MAX) if self.sign == 1 else min(self.ans, -MIN)
         elif self.state == 'signed':
             self.sign = 1 if c == '+' else -1
 
@@ -180,82 +181,43 @@ class OfficialSolution:
         return automaton.sign * automaton.ans
 
 
+class Case:
+    def __init__(self, s: str, want: int):
+        self.s = s
+        self.want = want
+
+
+test_cases: List[Case] = [
+            Case(s='', want=0),
+            Case(s='+', want=0),
+            Case(s='-', want=0),
+            Case(s='42', want=42),
+            Case(s='+1', want=1),
+            Case(s='    -42', want=-42),
+            Case(s='4193 with words', want=4193),
+            Case(s='words and 987', want=0),
+            Case(s='-91283472332', want=-2147483648),
+            Case(s='4193 with words', want=4193),
+            Case(s="+-12", want=0),
+        ]
+
+
 class TestSolution(unittest.TestCase):
     def setUp(self) -> None:
         self.s = Solution()
 
     def test_my_atoi(self) -> None:
-        self.assertEqual(
-            self.s.my_atoi(""),
-            0,
-        )
-        self.assertEqual(
-            self.s.my_atoi(" "),
-            0,
-        )
-        self.assertEqual(
-            self.s.my_atoi("+"),
-            0,
-        )
-        self.assertEqual(
-            self.s.my_atoi("-"),
-            0,
-        )
-        self.assertEqual(
-            self.s.my_atoi("42"),
-            42,
-        )
-        self.assertEqual(
-            self.s.my_atoi("-42"),
-            -42,
-        )
-        self.assertEqual(
-            self.s.my_atoi("  42"),
-            42,
-        )
-        self.assertEqual(
-            self.s.my_atoi("  -42"),
-            -42,
-        )
+        for i, tc in enumerate(test_cases):
+            self.assertEqual(tc.want, self.s.my_atoi(tc.s))
 
 
 class TestOfficialSolution(unittest.TestCase):
     def setUp(self) -> None:
         self.s = OfficialSolution()
 
-    def test_my_atoi_2(self) -> None:
-        self.assertEqual(
-            self.s.my_atoi_2(""),
-            0,
-        )
-        self.assertEqual(
-            self.s.my_atoi_2(" "),
-            0,
-        )
-        self.assertEqual(
-            self.s.my_atoi_2("+"),
-            0,
-        )
-        self.assertEqual(
-            self.s.my_atoi_2("-"),
-            0,
-        )
-        self.assertEqual(
-            self.s.my_atoi_2("42"),
-            42,
-        )
-        self.assertEqual(
-            self.s.my_atoi_2("-42"),
-            -42,
-        )
-        self.assertEqual(
-            self.s.my_atoi_2("  42"),
-            42,
-        )
-        self.assertEqual(
-            self.s.my_atoi_2("  -42"),
-            -42,
-        )
+    def test_my_atoi(self) -> None:
+        for i, tc in enumerate(test_cases):
+            self.assertEqual(tc.want, self.s.my_atoi(tc.s))
 
 
 if __name__ == '__main__':
