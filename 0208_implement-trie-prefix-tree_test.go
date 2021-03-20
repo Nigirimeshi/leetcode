@@ -38,7 +38,7 @@ type Trie struct {
 }
 
 /** Initialize your data structure here. */
-func Constructor() Trie {
+func NewTrie() Trie {
 	return Trie{
 		root: &TrieNode{
 			End:      false,
@@ -87,7 +87,7 @@ func (this *Trie) StartsWith(prefix string) bool {
 }
 
 func TestTrie(t *testing.T) {
-	trie := Constructor()
+	trie := NewTrie()
 	trie.Insert("apple")
 	if !trie.Search("apple") {
 		t.Errorf("should return: true, but get: false")
