@@ -1,4 +1,4 @@
-package problems
+package leetcode
 
 /*
 N 皇后
@@ -113,7 +113,7 @@ func isValid(board [][]rune, row int, col int) bool {
 	return true
 }
 
-func compareSlice(a, b [][]string) bool {
+func compareDoubleSlice(a, b [][]string) bool {
 	if len(a) != len(b) {
 		return false
 	}
@@ -151,7 +151,7 @@ func TestSolveNQueens(t *testing.T) {
 	}
 	for _, tc := range testCases {
 		output := solveNQueens(tc.n)
-		if !compareSlice(output, tc.want) {
+		if !compareDoubleSlice(output, tc.want) {
 			t.Errorf("solveNQueens(%v) return: %+v != %+v\n", tc.n, output, tc.want)
 		}
 	}
