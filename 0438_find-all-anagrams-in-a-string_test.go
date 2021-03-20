@@ -1,6 +1,10 @@
 package leetcode
 
-import "testing"
+import (
+	"testing"
+
+	"leetcode/utils"
+)
 
 /*
 找到字符串中所有字母异位词
@@ -90,23 +94,6 @@ func findAnagrams(s string, p string) []int {
 	return ans
 }
 
-func compareSlice(a, b []int) bool {
-	if len(a) != len(b) {
-		return false
-	}
-
-	if a == nil || b == nil {
-		return false
-	}
-
-	for i, v := range a {
-		if b[i] != v {
-			return false
-		}
-	}
-	return true
-}
-
 func TestFindAnagrams(t *testing.T) {
 	testCases := []struct {
 		s    string
@@ -119,7 +106,7 @@ func TestFindAnagrams(t *testing.T) {
 
 	for _, tc := range testCases {
 		output := findAnagrams(tc.s, tc.p)
-		if !compareSlice(tc.want, output) {
+		if !utils.CompareSlice(tc.want, output) {
 			t.Errorf("findAnagrams(%v, %v) return: %v != %v\n", tc.s, tc.p, output, tc.want)
 		}
 	}

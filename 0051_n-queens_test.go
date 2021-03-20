@@ -36,6 +36,8 @@ n 皇后问题 研究的是如何将 n 个皇后放置在 n×n 的棋盘上，�
 import (
 	"strings"
 	"testing"
+
+	"leetcode/utils"
 )
 
 func solveNQueens(n int) [][]string {
@@ -113,34 +115,6 @@ func isValid(board [][]rune, row int, col int) bool {
 	return true
 }
 
-func compareDoubleSlice(a, b [][]string) bool {
-	if len(a) != len(b) {
-		return false
-	}
-
-	if a == nil || b == nil {
-		return false
-	}
-
-	for i := range a {
-		if len(a[i]) != len(b[i]) {
-			return false
-		}
-
-		if a[i] == nil || b[i] == nil {
-			return false
-		}
-
-		for j := range a[i] {
-			if a[i][j] != b[i][j] {
-				return false
-			}
-		}
-	}
-
-	return true
-}
-
 func TestSolveNQueens(t *testing.T) {
 	testCases := []struct {
 		n    int
@@ -151,7 +125,7 @@ func TestSolveNQueens(t *testing.T) {
 	}
 	for _, tc := range testCases {
 		output := solveNQueens(tc.n)
-		if !compareDoubleSlice(output, tc.want) {
+		if !utils.CompareDoubleSlice(output, tc.want) {
 			t.Errorf("solveNQueens(%v) return: %+v != %+v\n", tc.n, output, tc.want)
 		}
 	}
