@@ -36,10 +36,15 @@ lists[i] 按 升序 排列
 lists[i].length 的总和不超过 10^4
 
 解法：
-1. 归并排序。
+1. 顺序合并。
 
 时间复杂度：O(k^2n)
 空间复杂度：O(1)
+
+2. 分治合并。
+
+时间复杂度：O(kn * logk)
+空间复杂度：O(logn)
 
 """
 import unittest
@@ -49,14 +54,14 @@ from structure.linked_list import ListNode, list_to_list_node
 
 
 class Solution:
-    def mergeKLists(self, lists: List[ListNode]) -> ListNode:
+    def merge_k_lists(self, lists: List[ListNode]) -> ListNode:
         """顺序合并。"""
         ans: Optional[ListNode] = None
         for node in lists:
-            ans = self.merge(ans, node)
+            ans = self.__merge(ans, node)
         return ans
 
-    def merge(self, left: ListNode, right: ListNode) -> Optional[ListNode]:
+    def __merge(self, left: ListNode, right: ListNode) -> Optional[ListNode]:
         if not any((left, right)):
             return left if not right else right
 
@@ -89,6 +94,45 @@ class Solution:
         return head.next
 
 
+class Solution2:
+    def merge_k_lists(self, lists: List[ListNode]) -> ListNode:
+        """分治合并。"""
+        return self.__merge(lists, 0, len(lists) - 1)
+
+    def __merge(
+        self, lists: List[ListNode], left: int, right: int
+    ) -> Optional[ListNode]:
+        if left == right:
+            return lists[left]
+        if left > right:
+            return None
+
+        mid = left + (right - left) // 2
+        a = self.__merge(lists, left, mid)
+        b = self.__merge(lists, mid + 1, right)
+        return self.__merge_to_list_node(a, b)
+
+    def __merge_to_list_node(
+        self, a: Optional[ListNode], b: Optional[ListNode]
+    ) -> Optional[ListNode]:
+        if not a or not b:
+            return a if a else b
+
+        head = root = ListNode()
+        while a and b:
+            if a.val <= b.val:
+                root.next = a
+                a = a.next
+            else:
+                root.next = b
+                b = b.next
+
+            root = root.next
+
+        root.next = a if a else b
+        return head.next
+
+
 class Case:
     def __init__(self, lists: List[Optional[ListNode]], want: Optional[ListNode]):
         self.lists = lists
@@ -113,7 +157,7 @@ class Case:
 
 class TestSolution(unittest.TestCase):
     def setUp(self) -> None:
-        self.s = Solution()
+        self.s = Solution2()
 
     def test_mergeKLists(self):
         c1 = [None, ListNode(1)]
@@ -134,7 +178,7 @@ class TestSolution(unittest.TestCase):
         test_cases: List[Case] = [Case(c1, c1[1]), Case(c2, c2_want), Case(c3, None)]
 
         for tc in test_cases:
-            output = self.s.mergeKLists(tc.lists)
+            output = self.s.merge_k_lists(tc.lists)
             self.assertTrue(tc.compare(output))
 
 
