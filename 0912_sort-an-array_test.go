@@ -27,24 +27,187 @@ import (
 -50000 <= nums[i] <= 50000
 
 解法：
-1. 快速排序。
-时间复杂度：O(logN)
-空间复杂度：O(logN)
-
-2. 冒泡排序。
+1. 冒泡排序。
 时间复杂度：O(N^2)
-空间复杂度
+空间复杂度：O(1)
+是否稳定：√
+排序方式：内排序
+
+2. 选择排序。
+时间复杂度：O(N^2)
+空间复杂度：O(1)
+是否稳定：×
+排序方式：内排序
+
+3. 插入排序。
+时间复杂度：O(N^2)
+空间复杂度：O(1)
+是否稳定：√
+排序方式：内排序
+
+4. 希尔排序。
+时间复杂度：O(NlogN)
+空间复杂度：O(1)
+是否稳定：×
+排序方式：内排序
+
+5. 归并排序。
+时间复杂度：O(NlogN)
+空间复杂度：O(N)
+是否稳定：√
+排序方式：外排序
+
+6. 快速排序。
+时间复杂度：O(NlogN)
+空间复杂度：O(NlogN)
+是否稳定：×
+排序方式：内排序
 */
 
-func quickSort(nums []int, left, right int) {
-	/* 基础快排。*/
+// BubbleSort 冒泡排序。
+func BubbleSort(nums []int) {
+	/*
+		遍历数组，每次比较相邻元素大小，小的在前，大的在后。
+	*/
+	n := len(nums)
+	for i := 0; i < n; i++ {
+		// 标记是否发生元素交换。
+		flag := false
+		for j := i; j < n; j++ {
+			if nums[i] > nums[j] {
+				nums[i], nums[j] = nums[j], nums[i]
+				flag = true
+			}
+		}
+		// 一次交换都没发生，说明已经有序。
+		if !flag {
+			break
+		}
+	}
+}
+
+// SelectionSort 选择排序。
+func SelectionSort(nums []int) {
+	/*
+		遍历数组，构建有序序列，每次从数组中未排序区间内选择一个最小值，放到有序序列的尾部。
+	*/
+	n := len(nums)
+	for i := 0; i < n; i++ {
+		// 从 [i+1, n-1] 区间内找出最小元素下标。
+		minIdx := i
+		for j := i + 1; j < n; j++ {
+			if nums[j] < nums[minIdx] {
+				minIdx = j
+			}
+		}
+		// 将最小元素放到有序序列的尾部。
+		nums[i], nums[minIdx] = nums[minIdx], nums[i]
+	}
+}
+
+// InsertionSort 插入排序。
+func InsertionSort(nums []int) {
+	/*
+		遍历数组，构建有序序列，依次选择排序序列中的元素，将其加入到有序序列中何时的位置。
+	*/
+	n := len(nums)
+	if n <= 1 {
+		return
+	}
+
+	// 假设第一个元素在有序区间，[1, n-1] 为未排序区间。
+	for i := 1; i < n; i++ {
+		tmp := i
+		for j := tmp - 1; j >= 0; j-- {
+			if nums[tmp] < nums[j] {
+				nums[tmp], nums[j] = nums[j], nums[tmp]
+				tmp = j
+			} else {
+				break
+			}
+		}
+	}
+}
+
+// ShellSort 希尔排序。
+func ShellSort(nums []int) {
+	/*
+		以一定增长序列间隔进行插入排序。
+	*/
+	n := len(nums)
+	// 增长序列：n/2, n/2/2, ..., 1。
+	for feq := n / 2; feq > 0; feq /= 2 {
+		for i := 0; i < n; i++ {
+			tmp := i
+			for j := tmp - feq; j >= 0; j -= feq {
+				if nums[tmp] < nums[j] {
+					nums[tmp], nums[j] = nums[j], nums[tmp]
+					tmp = j
+				} else {
+					break
+				}
+			}
+		}
+	}
+}
+
+// MergeSort 归并排序。
+func MergeSort(nums []int) []int {
+	/*
+		采用分治的思想，将数组自上而下递归拆分至不可再分后，自底向上合并子数组。
+	*/
+	n := len(nums)
+	if n <= 1 {
+		return nums
+	}
+
+	mid := n / 2
+	left := MergeSort(nums[:mid])
+	right := MergeSort(nums[mid:])
+
+	ans := merge(left, right)
+	return ans
+}
+
+func merge(left, right []int) []int {
+	n1, n2 := len(left), len(right)
+	// 存放合并后的有序切片。
+	arr := make([]int, 0, n1+n2)
+
+	i, j := 0, 0
+	// 交替合并切片。
+	for i < n1 && j < n2 {
+		if left[i] <= right[j] {
+			arr = append(arr, left[i])
+			i++
+		} else {
+			arr = append(arr, right[j])
+			j++
+		}
+	}
+
+	// 可能剩余 left 元素，直接追加至 arr。
+	for i < n1 {
+		arr = append(arr, left[i])
+		i++
+	}
+	// 可能剩余 right 元素，直接追加至 arr。
+	for j < n2 {
+		arr = append(arr, right[j])
+		j++
+	}
+	return arr
+}
+
+// QuickSort 基础快速排序。
+func QuickSort(nums []int, left, right int) {
 	if left >= right {
 		return
 	}
 
 	pivot := partition(nums, left, right)
-	quickSort(nums, left, pivot-1)
-	quickSort(nums, pivot+1, right)
+	QuickSort(nums, left, pivot-1)
+	QuickSort(nums, pivot+1, right)
 }
 
 func partition(nums []int, left, right int) int {
@@ -71,15 +234,15 @@ func swap(nums []int, left, right int) {
 	nums[left], nums[right] = nums[right], nums[left]
 }
 
-func randomizedQuickSort(nums []int, left, right int) {
-	/* 随机化快排。 */
+// RandomizedQuickSort 随机化快速排序。
+func RandomizedQuickSort(nums []int, left, right int) {
 	if left >= right {
 		return
 	}
 
 	pivot := randomizedPartition(nums, left, right)
-	randomizedQuickSort(nums, left, pivot-1)
-	randomizedQuickSort(nums, pivot+1, right)
+	RandomizedQuickSort(nums, left, pivot-1)
+	RandomizedQuickSort(nums, pivot+1, right)
 }
 
 func randomizedPartition(nums []int, left, right int) int {
@@ -116,16 +279,47 @@ var tests = []struct {
 }{
 	{nums: []int{1}, want: []int{1}},
 	{nums: []int{5, 2, 3, 1}, want: []int{1, 2, 3, 5}},
+	{nums: []int{1, 2, 3, 4, 5}, want: []int{1, 2, 3, 4, 5}},
 	{nums: []int{5, 1, 1, 2, 0, 0}, want: []int{0, 0, 1, 1, 2, 5}},
 	{nums: []int{-4, 0, 7, 4, 9, -5, -1, 0, -7, -1}, want: []int{-7, -5, -4, -1, -1, 0, 0, 4, 7, 9}},
+}
+
+func TestBubbleSort(t *testing.T) {
+	for i := range tests {
+		tc := tests[i]
+		BubbleSort(tc.nums)
+		if !utils.CompareSlice(tc.nums, tc.want) {
+			t.Fatalf("BubbleSort(%+v) return %+v != %+v", tc.nums, tc.nums, tc.want)
+		}
+	}
+}
+
+func TestSelectionSort(t *testing.T) {
+	for i := range tests {
+		tc := tests[i]
+		SelectionSort(tc.nums)
+		if !utils.CompareSlice(tc.nums, tc.want) {
+			t.Fatalf("SelectionSort(%+v) return %+v != %+v", tc.nums, tc.nums, tc.want)
+		}
+	}
+}
+
+func TestInsertionSort(t *testing.T) {
+	for i := range tests {
+		tc := tests[i]
+		InsertionSort(tc.nums)
+		if !utils.CompareSlice(tc.nums, tc.want) {
+			t.Fatalf("InsertionSort(%+v) return %+v != %+v", tc.nums, tc.nums, tc.want)
+		}
+	}
 }
 
 func TestQuickSort(t *testing.T) {
 	for i := range tests {
 		tc := tests[i]
-		quickSort(tc.nums, 0, len(tc.nums)-1)
+		QuickSort(tc.nums, 0, len(tc.nums)-1)
 		if !utils.CompareSlice(tc.nums, tc.want) {
-			t.Fatalf("quickSort(%+v) return %+v != %+v", tc.nums, tc.nums, tc.want)
+			t.Fatalf("QuickSort(%+v) return %+v != %+v", tc.nums, tc.nums, tc.want)
 		}
 	}
 }
@@ -133,9 +327,29 @@ func TestQuickSort(t *testing.T) {
 func TestRandomizedQuickSort(t *testing.T) {
 	for i := range tests {
 		tc := tests[i]
-		randomizedQuickSort(tc.nums, 0, len(tc.nums)-1)
+		RandomizedQuickSort(tc.nums, 0, len(tc.nums)-1)
 		if !utils.CompareSlice(tc.nums, tc.want) {
-			t.Fatalf("randomizedQuickSort(%+v) return %+v != %+v", tc.nums, tc.nums, tc.want)
+			t.Fatalf("RandomizedQuickSort(%+v) return %+v != %+v", tc.nums, tc.nums, tc.want)
+		}
+	}
+}
+
+func TestShellSort(t *testing.T) {
+	for i := range tests {
+		tc := tests[i]
+		ShellSort(tc.nums)
+		if !utils.CompareSlice(tc.nums, tc.want) {
+			t.Fatalf("ShellSort(%+v) return %+v != %+v", tc.nums, tc.nums, tc.want)
+		}
+	}
+}
+
+func TestMergeSort(t *testing.T) {
+	for i := range tests {
+		tc := tests[i]
+		output := MergeSort(tc.nums)
+		if !utils.CompareSlice(output, tc.want) {
+			t.Fatalf("MergeSort(%+v) return %+v != %+v", tc.nums, output, tc.want)
 		}
 	}
 }
