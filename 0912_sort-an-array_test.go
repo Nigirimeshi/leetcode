@@ -68,6 +68,12 @@ import (
 空间复杂度：O(1)
 是否稳定：×
 排序方式：内排序
+
+8. 计数排序。
+时间复杂度：O(N + K)
+空间复杂度：O(K)
+是否稳定：√
+排序方式：外排序
 */
 
 // BubbleSort 冒泡排序。
@@ -251,6 +257,53 @@ func heapify(nums []int, end int, i int) {
 	}
 }
 
+// CountingSort 计数排序。
+func CountingSort(nums []int) {
+	/*
+		用辅助数组下标记录输入序列元素出现次数，再根据辅助数组填充输入序列。
+	*/
+	n := len(nums)
+	if n <= 1 {
+		return
+	}
+
+	// 找出序列中最大值和最小值。
+	max, min := nums[0], nums[0]
+	for i := range nums {
+		if nums[i] > max {
+			max = nums[i]
+		}
+		if nums[i] < min {
+			min = nums[i]
+		}
+	}
+
+	// 初始化计数切片。
+	// 例如：[2, 3, 5]，count 应初始化为 [0, 0, 0, 0]
+	count := make([]int, max-min+1)
+
+	// 填充计数切片，统计各元素出现次数。
+	// 计数切片的下标 = nums[i] - min。
+	for i := range nums {
+		count[nums[i]-min]++
+	}
+
+	// 反向填充 nums。
+	idx := 0
+	for i := range count {
+		// 跳过出现次数为 0 的数字。
+		if count[i] == 0 {
+			continue
+		}
+		// 根据元素出现次数，依序填充 nums。
+		for j := 1; j <= count[i]; j++ {
+			// 注意：计数切片的下标 + min 才是原始数字。
+			nums[idx] = i + min
+			idx++
+		}
+	}
+}
+
 // QuickSort 基础快速排序。
 func QuickSort(nums []int, left, right int) {
 	if left >= right {
@@ -412,6 +465,16 @@ func TestHeapSort(t *testing.T) {
 		HeapSort(tc.nums)
 		if !utils.CompareSlice(tc.want, tc.want) {
 			t.Fatalf("HeapSort(%+v) return %+v != %+v", tc.nums, tc.want, tc.want)
+		}
+	}
+}
+
+func TestCountingSort(t *testing.T) {
+	for i := range tests {
+		tc := tests[i]
+		CountingSort(tc.nums)
+		if !utils.CompareSlice(tc.want, tc.want) {
+			t.Fatalf("CountingSort(%+v) return %+v != %+v", tc.nums, tc.want, tc.want)
 		}
 	}
 }
