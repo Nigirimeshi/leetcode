@@ -391,6 +391,71 @@ func CountingSort(nums []int) {
 	}
 }
 
+// BucketSort 桶排序。
+func BucketSort(nums []int, bucketSize int) []int {
+	/*
+		设桶的大小为 size，创建 (max(nums) - min(nums)) / size + 1 个桶，将元素放入对应范围的桶内，
+		对每个非空桶内元素排序，
+		将大小为 1 的桶内元素逐个取出，构成有序序列。
+	*/
+	n := len(nums)
+	if n <= 1 {
+		return nums
+	}
+
+	// 找出序列中最大值和最小值。
+	max, min := nums[0], nums[0]
+	for i := range nums {
+		if nums[i] > max {
+			max = nums[i]
+		}
+		if nums[i] < min {
+			min = nums[i]
+		}
+	}
+
+	// 桶的数量。
+	bucketNumb := (max-min)/bucketSize + 1
+	// 初始化桶。
+	bucket := make([][]int, bucketNumb)
+	for i := range bucket {
+		bucket[i] = make([]int, 0)
+	}
+	// 填充桶。
+	for i := range nums {
+		idx := (nums[i] - min) / bucketSize
+		bucket[idx] = append(bucket[idx], nums[i])
+	}
+
+	ans := make([]int, 0, n)
+	// 遍历桶。
+	for i := range bucket {
+		// 跳过空桶。
+		if len(bucket[i]) == 0 {
+			continue
+		}
+
+		// 所有桶的大小为 1 时，不用再排序了，直接加入结果集。
+		if bucketSize == 1 {
+			for j := range bucket[i] {
+				ans = append(ans, bucket[i][j])
+			}
+		} else {
+			// 只有一个桶，说明桶太大了，需要缩小。
+			if bucketNumb == 1 {
+				bucketSize -= 1
+			}
+			// 递归桶排序。
+			tmp := BucketSort(bucket[i], bucketSize)
+			// 加入结果集。
+			for j := range tmp {
+				ans = append(ans, tmp[j])
+			}
+		}
+	}
+	return ans
+}
+
 var tests = []struct {
 	nums []int
 	want []int
@@ -488,6 +553,16 @@ func TestCountingSort(t *testing.T) {
 		CountingSort(tc.nums)
 		if !utils.CompareSlice(tc.want, tc.want) {
 			t.Fatalf("CountingSort(%+v) return %+v != %+v", tc.nums, tc.want, tc.want)
+		}
+	}
+}
+
+func TestBucketSort(t *testing.T) {
+	for i := range tests {
+		tc := tests[i]
+		BucketSort(tc.nums, 10)
+		if !utils.CompareSlice(tc.want, tc.want) {
+			t.Fatalf("BucketSort(%+v) return %+v != %+v", tc.nums, tc.want, tc.want)
 		}
 	}
 }
