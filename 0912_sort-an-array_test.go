@@ -541,8 +541,8 @@ func TestHeapSort(t *testing.T) {
 	for i := range tests {
 		tc := tests[i]
 		HeapSort(tc.nums)
-		if !utils.CompareSlice(tc.want, tc.want) {
-			t.Fatalf("HeapSort(%+v) return %+v != %+v", tc.nums, tc.want, tc.want)
+		if !utils.CompareSlice(tc.nums, tc.want) {
+			t.Fatalf("HeapSort(%+v) return %+v != %+v", tc.nums, tc.nums, tc.want)
 		}
 	}
 }
@@ -551,8 +551,8 @@ func TestCountingSort(t *testing.T) {
 	for i := range tests {
 		tc := tests[i]
 		CountingSort(tc.nums)
-		if !utils.CompareSlice(tc.want, tc.want) {
-			t.Fatalf("CountingSort(%+v) return %+v != %+v", tc.nums, tc.want, tc.want)
+		if !utils.CompareSlice(tc.nums, tc.want) {
+			t.Fatalf("CountingSort(%+v) return %+v != %+v", tc.nums, tc.nums, tc.want)
 		}
 	}
 }
@@ -560,9 +560,9 @@ func TestCountingSort(t *testing.T) {
 func TestBucketSort(t *testing.T) {
 	for i := range tests {
 		tc := tests[i]
-		BucketSort(tc.nums, 10)
-		if !utils.CompareSlice(tc.want, tc.want) {
-			t.Fatalf("BucketSort(%+v) return %+v != %+v", tc.nums, tc.want, tc.want)
+		output := BucketSort(tc.nums, 10)
+		if !utils.CompareSlice(output, tc.want) {
+			t.Fatalf("BucketSort(%+v) return %+v != %+v", tc.nums, output, tc.want)
 		}
 	}
 }
