@@ -62,6 +62,12 @@ import (
 空间复杂度：O(NlogN)
 是否稳定：×
 排序方式：内排序
+
+7. 堆排序。
+时间复杂度：O(NlogN)
+空间复杂度：O(1)
+是否稳定：×
+排序方式：内排序
 */
 
 // BubbleSort 冒泡排序。
@@ -197,6 +203,52 @@ func merge(left, right []int) []int {
 		j++
 	}
 	return arr
+}
+
+// HeapSort 堆排序。
+func HeapSort(nums []int) {
+	/*
+		建立大顶堆，将堆顶元素与数组尾元素交换，
+		重新平衡堆，再将堆顶元素与数组倒数第二个元素交换，
+		... 以此类推，直到数组有序。
+	*/
+	n := len(nums)
+
+	// 自底向上建立大顶堆。
+	for i := n - 1; i >= 0; i-- {
+		heapify(nums, n, i)
+	}
+
+	// 从后向前构建有序序列。
+	for i := n - 1; i > 0; i-- {
+		// 将堆顶元素与 i 指向元素交换。
+		nums[i], nums[0] = nums[0], nums[i]
+		// 自上而下恢复堆。
+		heapify(nums, i, 0)
+	}
+}
+
+func heapify(nums []int, end int, i int) {
+	largest := i
+
+	// 左右节点对应的数字下标。
+	left, right := i*2+1, i*2+2
+	// 找出左右节点中的较大的。
+	if left < end && nums[left] > nums[largest] {
+		largest = left
+	}
+	if right < end && nums[right] > nums[largest] {
+		largest = right
+	}
+
+	// 左右节点中，存在比当前节点大的值。
+	if largest != i {
+		// 交换当前节点与较大子节点。
+		// 确保大节点在上。
+		nums[i], nums[largest] = nums[largest], nums[i]
+		// 递归向下检查。
+		heapify(nums, end, largest)
+	}
 }
 
 // QuickSort 基础快速排序。
@@ -350,6 +402,16 @@ func TestMergeSort(t *testing.T) {
 		output := MergeSort(tc.nums)
 		if !utils.CompareSlice(output, tc.want) {
 			t.Fatalf("MergeSort(%+v) return %+v != %+v", tc.nums, output, tc.want)
+		}
+	}
+}
+
+func TestHeapSort(t *testing.T) {
+	for i := range tests {
+		tc := tests[i]
+		HeapSort(tc.nums)
+		if !utils.CompareSlice(tc.want, tc.want) {
+			t.Fatalf("HeapSort(%+v) return %+v != %+v", tc.nums, tc.want, tc.want)
 		}
 	}
 }
